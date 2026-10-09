@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacidade e dados · Fratia</title>
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --fundo: #faf8f3; --tinta: #1d2a24; --sec: #4b5a52; --suave: #7c877f; --principal: #1e5a44;
+          --destaque: #c8703f; --borda: #e1dccd; --escuro: #10161c; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--fundo); color: var(--tinta); font-family: Inter, system-ui, sans-serif; }
+  header { background: var(--escuro); color: #eef1f3; padding: 22px clamp(16px, 5vw, 80px); display: flex;
+           justify-content: space-between; align-items: center; }
+  header a { color: #eef1f3; text-decoration: none; font-weight: 700; font-size: 20px; }
+  header span { color: #b3bcc4; font-size: 14px; }
+  main { max-width: 820px; margin: 0 auto; padding: clamp(40px, 7vw, 80px) clamp(16px, 5vw, 40px); }
+  .sobre { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--principal); }
+  h1 { font-size: clamp(32px, 4vw, 46px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; margin-top: 12px; }
+  .lead { margin-top: 18px; font-size: 18px; line-height: 1.6; color: var(--sec); }
+  .resumo { margin-top: 32px; display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+  .resumo div { background: #fff; border: 1px solid var(--borda); border-radius: 14px; padding: 16px 18px; font-size: 15px;
+                line-height: 1.5; color: var(--sec); }
+  .resumo b { display: block; color: var(--tinta); margin-bottom: 4px; }
+  h2 { margin-top: 44px; font-size: 22px; font-weight: 600; }
+  p, li { font-size: 16px; line-height: 1.7; color: var(--sec); }
+  p { margin-top: 12px; }
+  ul { margin-top: 10px; padding-left: 20px; }
+  .atualizado { margin-top: 48px; font-size: 13px; color: var(--suave); }
+  @media (max-width: 640px) { .resumo { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header><a href="index.html" style="display:flex;align-items:center;gap:10px"><svg style="width:28px;height:28px" viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#2bb3a3"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span style="color:#f0b429">ia</span></span></a><span>Dados e IA para restaurantes</span></header>
+<main>
+  <span class="sobre">Privacidade e dados</span>
+  <h1>Como cuidamos dos dados do seu restaurante.</h1>
+  <p class="lead">Os dados da sua operação são seus. Usamos só o necessário para montar os painéis e o
+    acompanhamento, com acesso restrito e sem vender nem repassar nada a terceiros.</p>
+
+  <div class="resumo">
+    <div><b>Os dados são seus</b>Você decide o que entra e pode pedir a exclusão a qualquer momento.</div>
+    <div><b>Só o necessário</b>Compras, estoque, vendas, fichas e resultado — nada além do que os painéis usam.</div>
+    <div><b>Acesso restrito</b>Só a sua equipe autorizada e quem trabalha no seu projeto acessa os painéis.</div>
+    <div><b>IA com cuidado</b>Na IA vai só o que a pergunta precisa; o fornecedor de IA é combinado com você.</div>
+  </div>
+
+  <h2>1. Quem somos e qual é o nosso papel</h2>
+  <p>Fratia (CNPJ 40.472.749/0001-56) presta serviços de análise de dados para restaurantes. Nos termos da Lei Geral de Proteção de
+    Dados (Lei 13.709/2018), o restaurante contratante é o <b>controlador</b> dos dados da operação dele, e nós
+    atuamos como <b>operador</b>: tratamos os dados só para entregar o serviço contratado, conforme as instruções
+    do cliente.</p>
+
+  <h2>2. Que dados usamos</h2>
+  <ul>
+    <li><b>Dados da operação:</b> compras e notas fiscais de fornecedores, estoque, vendas por prato, fichas técnicas,
+      faturamento e resultado (DRE).</li>
+    <li><b>Dados de contato</b> de quem fala com a gente (nome, e-mail, telefone), para atendimento e contrato.</li>
+    <li><b>Avaliações de clientes</b> (quando o restaurante usa o painel Voz do Cliente): nota e comentário, sem
+      precisar identificar a pessoa.</li>
+  </ul>
+  <p>Não pedimos dados de saúde, documentos pessoais de clientes do restaurante nem dados de cartão.</p>
+
+  <h2>3. Para que usamos</h2>
+  <ul>
+    <li>Montar os painéis, a leitura do mês e os alertas do restaurante.</li>
+    <li>Montar o informe diário e responder às perguntas feitas ao Copiloto de IA (a IA pode ser desligada a pedido do
+      cliente).</li>
+    <li>Prestar suporte, emitir cobrança e cumprir obrigações legais.</li>
+  </ul>
+  <p>Não usamos os dados de um cliente para atender outro, e casos só são divulgados com autorização por escrito.</p>
+
+  <h2>4. Onde os dados ficam</h2>
+  <p>Em serviços de nuvem contratados para o projeto, com acesso por login e restrito às pessoas autorizadas. O local
+    de armazenamento é informado na proposta e pode ser definido junto com o cliente.</p>
+
+  <h2>5. Inteligência artificial</h2>
+  <p>O Copiloto de IA recebe só os números necessários para responder a cada pergunta, já calculados pelos painéis —
+    a IA não tem acesso livre à base. O fornecedor de IA é combinado com o cliente antes de ligar o recurso; se o
+    fornecedor processar dados fora do Brasil, isso é informado e só acontece com a concordância do cliente.</p>
+
+  <h2>6. Com quem compartilhamos</h2>
+  <p>Apenas com fornecedores necessários para prestar o serviço (nuvem, IA, e-mail), sob contrato e com o mesmo
+    cuidado. Não vendemos dados e não usamos dados de clientes para publicidade.</p>
+
+  <h2>7. Por quanto tempo guardamos</h2>
+  <p>Enquanto o contrato estiver ativo. No fim, os dados são devolvidos ou excluídos em até 30 dias, salvo o que a
+    lei obrigue a guardar (por exemplo, documentos fiscais e de cobrança).</p>
+
+  <h2>8. Seus direitos</h2>
+  <p>Você pode pedir acesso, correção, portabilidade ou exclusão dos dados, e saber com quem eles foram
+    compartilhados. Basta escrever para <a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a>; respondemos em até 15 dias.</p>
+
+  <h2>9. Contato</h2>
+  <p>Fratia · CNPJ 40.472.749/0001-56 · Paulínia (SP) · contato@fratia.com.br</p>
+
+  <p class="atualizado">Última atualização: 9 de outubro de 2026.</p>
+</main>
+</body>
+</html>

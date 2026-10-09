@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fratia · Dados e IA para restaurantes</title>
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Abertura sempre escura (paleta Grafite da vitrine) */
+  :root {
+    --fundo: #10161c; --tinta: #eef1f3; --tinta-sec: #b3bcc4;
+    --principal: #2bb3a3; --destaque: #f0b429; --borda: #2a333c;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: var(--fundo); color: var(--tinta); font-family: Inter, system-ui, sans-serif; }
+
+  .hero { position: relative; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+  #cena { position: absolute; inset: 0; }
+  #cena canvas { display: block; }
+
+  nav { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+        padding: 22px clamp(16px, 5vw, 80px); border-bottom: 1px solid var(--borda); }
+  .logo { font-weight: 700; letter-spacing: -.01em; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+  .logo .ia { color: var(--destaque); }
+  .marca-simbolo { width: 30px; height: 30px; }
+  .menu { display: flex; gap: 30px; align-items: center; font-size: 15px; }
+  .menu a { color: var(--tinta); text-decoration: none; opacity: .9; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px; font-weight: 500;
+         font-size: 16px; text-decoration: none; background: #fff; color: #10161c !important; opacity: 1 !important; }
+  .btn.cheio { background: var(--principal); color: #fff !important; }
+  .btn:hover { filter: brightness(1.08); }
+
+  .texto { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; justify-content: center;
+           max-width: 860px; padding: 48px clamp(16px, 5vw, 80px) 32px; pointer-events: none; }
+  .texto a { pointer-events: auto; }
+  .selo { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--principal); margin-bottom: 22px; }
+  h1 { font-size: clamp(36px, 4.4vw, 62px); line-height: 1.06; letter-spacing: -.025em; font-weight: 600; }
+  .rotativa { display: block; color: var(--principal); transition: opacity .5s, transform .5s; }
+  .rotativa.saindo { opacity: 0; transform: translateY(14px); }
+  .sub { margin-top: 24px; font-size: clamp(16px, 1.3vw, 18px); line-height: 1.55; color: var(--tinta); max-width: 36em; }
+  .acoes { margin-top: 36px; display: flex; gap: 18px; flex-wrap: wrap; }
+
+  .atendemos { position: relative; z-index: 2; margin: 0 clamp(16px, 5vw, 80px); padding: 22px 0 30px;
+               border-top: 1px solid var(--borda); display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .atendemos b { font-size: 14px; letter-spacing: .08em; text-transform: uppercase; margin-right: 10px; }
+  .atendemos span { font-size: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.08);
+                    border: 1px solid rgba(255,255,255,.18); }
+
+  .aviso { position: fixed; z-index: 3; bottom: 10px; right: 10px; font-size: 12px; color: var(--tinta-sec);
+           background: #1c2229; padding: 6px 10px; border-radius: 6px; }
+
+  @media (max-width: 860px) {
+    .menu a:not(.btn) { display: none; }
+    .texto { justify-content: flex-end; padding-top: 42vh; }
+  }
+
+  /* ================= parte clara (tema Floresta da vitrine) ================= */
+  .claro {
+    --f-fundo: #faf8f3; --f-card: #eee9dc; --f-tinta: #1d2a24; --f-sec: #4b5a52; --f-suave: #7c877f;
+    --f-principal: #1e5a44; --f-destaque: #c8703f; --f-borda: #e1dccd;
+    background: var(--f-fundo); color: var(--f-tinta);
+  }
+  .bloco { padding: clamp(64px, 10vw, 120px) clamp(16px, 5vw, 80px); max-width: 1440px; margin: 0 auto; }
+  .sobre { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--f-principal); }
+  .claro h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; margin-top: 14px; max-width: 22em; }
+  .claro h2 em { font-style: normal; color: var(--f-principal); }
+  .intro { margin-top: 18px; font-size: 18px; line-height: 1.6; color: var(--f-sec); max-width: 40em; }
+
+  /* vitrine: abas sublinhadas + tela do painel com o Copiloto ao lado (formato de produto em uso) */
+  .abas { display: flex; gap: 6px; margin-top: 44px; border-bottom: 1px solid var(--f-borda); overflow-x: auto; }
+  .aba { font: inherit; font-size: 16px; font-weight: 500; padding: 14px 22px 16px; cursor: pointer; white-space: nowrap;
+         border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--f-suave);
+         display: inline-flex; align-items: center; gap: 10px; margin-bottom: -1px; }
+  .aba svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+  .aba .seta { opacity: .5; font-size: 14px; }
+  .aba[aria-selected="true"] { color: var(--f-principal); border-bottom-color: var(--f-principal); }
+  .aba[aria-selected="true"] .seta { display: none; }
+  .legenda-aba { margin: 14px 4px 0; font-size: 15px; line-height: 1.55; color: var(--f-tinta-sec, #4b5a52); max-width: 980px; }
+  .legenda-aba b { color: var(--f-principal); }
+  .moldura { position: relative; margin-top: 28px; aspect-ratio: 16 / 10; height: auto; border-radius: 18px; overflow: hidden;
+             border: 1px solid var(--f-borda); background: #fff; box-shadow: 0 24px 60px -30px rgba(29,42,36,.35); }
+  .moldura > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: left top; }
+  .selo-ficticio { position: absolute; top: 14px; left: 14px; font-size: 12px; font-weight: 600; padding: 5px 10px;
+                   border-radius: 999px; background: var(--f-destaque); color: #fff; z-index: 1; }
+  .copiloto { position: absolute; top: 0; right: 0; bottom: 0; width: min(46%, 560px); background: #10161c; color: #eef1f3;
+              display: flex; flex-direction: column; border-left: 1px solid #2a333c; }
+  .cp-topo { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #2a333c; }
+  .cp-logo { width: 34px; height: 34px; border-radius: 9px; background: var(--principal); display: grid; place-items: center;
+             font-weight: 700; color: #10161c; }
+  .cp-nome { font-weight: 600; font-size: 15px; }
+  .cp-nome small { display: block; font-weight: 400; font-size: 12px; color: #8d98a2; }
+  .cp-previa { font-size: 10px; font-weight: 700; letter-spacing: .06em; padding: 3px 8px; border-radius: 999px;
+               background: rgba(240,180,41,.18); color: #f0b429; margin-left: 4px; }
+  .cp-corpo { flex: 1; overflow: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; }
+  .cp-pergunta { align-self: flex-end; max-width: 88%; background: #1f4d5a; border: 1px solid #2f6f80; border-radius: 12px;
+                 padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+  .cp-resposta { font-size: 14px; line-height: 1.6; color: #d5dbe0; }
+  .cp-tabela-titulo { font-size: 14px; font-weight: 600; color: #eef1f3; }
+  .cp-tabela { width: 100%; border-collapse: collapse; font-size: 13px; background: #18212a; }
+  .cp-tabela th { text-align: right; font-weight: 500; color: #8d98a2; padding: 10px 12px; background: #1d2731; }
+  .cp-tabela td { text-align: right; padding: 11px 12px; border-top: 1px solid #26313b; font-variant-numeric: tabular-nums; }
+  .cp-tabela th:first-child, .cp-tabela td:first-child { text-align: left; }
+  .cp-tabela .ruim { color: #f08a5d; } .cp-tabela .bom { color: #4fd1b5; }
+  .cp-decisao { border-left: 3px solid var(--principal); padding: 4px 0 4px 12px; font-size: 14px; line-height: 1.55; }
+  .cp-rodape { padding: 12px 20px; font-size: 11.5px; line-height: 1.5; color: #8d98a2; border-top: 1px solid #2a333c; }
+
+  /* pilares: cartões grandes com selo e malha de rede no canto */
+  .pilares { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 52px; }
+  .pilar { position: relative; overflow: hidden; background: #fff; border: 1px solid var(--f-borda); border-radius: 22px;
+           padding: 40px 44px 42px; min-height: 400px; display: flex; flex-direction: column;
+           box-shadow: 0 18px 40px -32px rgba(29,42,36,.4); }
+  .pilar svg.malha { position: absolute; top: 0; right: 0; width: 64%; height: 62%; pointer-events: none; }
+  .tag { position: relative; align-self: flex-start; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+         padding: 8px 16px; border-radius: 999px; color: var(--cor); background: color-mix(in srgb, var(--cor) 12%, #fff);
+         border: 1px solid color-mix(in srgb, var(--cor) 45%, #fff); }
+  .pilar h3 { position: relative; margin-top: auto; padding-top: 150px; font-size: clamp(24px, 2.2vw, 32px); font-weight: 600; letter-spacing: -.015em; }
+  .pilar p { position: relative; margin-top: 16px; font-size: 17px; line-height: 1.6; color: var(--f-sec); }
+  .pilar a { position: relative; align-self: flex-start; margin-top: 26px; font-size: 17px; color: var(--f-tinta); text-decoration: none;
+             border-bottom: 1px solid var(--f-tinta); padding-bottom: 2px; }
+  .em-breve { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 700; letter-spacing: .06em;
+              text-transform: uppercase; color: var(--f-destaque); vertical-align: middle; }
+
+  /* como trabalhamos */
+  .passos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 52px; border-top: 1px solid var(--f-borda); }
+  .passo { padding: 32px 32px 8px 0; }
+  .passo + .passo { padding-left: 32px; border-left: 1px solid var(--f-borda); }
+  .num { font-size: 15px; font-weight: 700; color: var(--f-destaque); }
+  .passo h3 { margin-top: 14px; font-size: 24px; font-weight: 600; }
+  .passo p { margin-top: 12px; font-size: 16px; line-height: 1.6; color: var(--f-sec); }
+  .passo .prazo { margin-top: 16px; font-size: 13px; color: var(--f-suave); }
+
+  /* calculadora de margem */
+  .calc { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; margin-top: 44px; background: #fff;
+          border: 1px solid var(--f-borda); border-radius: 22px; padding: clamp(24px, 3.5vw, 48px); }
+  .calc label { display: block; font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+  .calc .campo + .campo { margin-top: 24px; }
+  .calc input[type=range] { width: 100%; accent-color: var(--f-principal); }
+  .calc .valor-campo { font-size: 22px; font-weight: 600; color: var(--f-principal); margin-top: 4px; }
+  .calc .resultado { background: var(--fundo); color: var(--tinta); border-radius: 18px; padding: 32px;
+                     display: flex; flex-direction: column; justify-content: center; }
+  .calc .resultado .rot { font-size: 14px; color: var(--tinta-sec); }
+  .calc .resultado .grande { font-size: clamp(34px, 4vw, 54px); font-weight: 700; color: var(--principal); margin: 6px 0 18px;
+                             letter-spacing: -.02em; }
+  .calc .resultado .medio { font-size: 26px; font-weight: 600; color: var(--destaque); margin-top: 6px; }
+  .calc .nota { margin-top: 22px; font-size: 13px; line-height: 1.6; color: var(--tinta-sec); }
+
+  /* por que nós */
+  .motivos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+  .motivo { border-top: 3px solid var(--f-principal); padding-top: 22px; }
+  .motivo h3 { font-size: 22px; font-weight: 600; }
+  .motivo p { margin-top: 12px; font-size: 16px; line-height: 1.65; color: var(--f-sec); }
+
+  /* oferta fundador */
+  .fundador { margin-top: 0; display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center;
+              background: var(--f-principal); color: #fff; border-radius: 22px; padding: clamp(28px, 4vw, 56px); }
+  .fundador h2 { color: #fff !important; margin-top: 10px !important; }
+  .fundador .sobre { color: #f0d9a8; }
+  .fundador p { margin-top: 16px; font-size: 17px; line-height: 1.6; color: #dfe9e3; }
+  .fundador ul { list-style: none; padding: 0; display: grid; gap: 14px; }
+  .fundador li { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 14px;
+                 padding: 14px 18px; font-size: 16px; }
+  .fundador li b { color: #f0d9a8; }
+
+  /* FAQ */
+  .faq { margin-top: 40px; border-top: 1px solid var(--f-borda); }
+  .faq details { border-bottom: 1px solid var(--f-borda); padding: 22px 4px; }
+  .faq summary { cursor: pointer; font-size: 19px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--f-principal); font-weight: 400; font-size: 26px; line-height: 1; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin-top: 14px; font-size: 16px; line-height: 1.7; color: var(--f-sec); max-width: 52em; }
+  .rodape a { color: var(--tinta-sec); }
+
+  /* chamada final + rodapé (volta ao escuro, como a referência) */
+  .final { background: var(--fundo); color: var(--tinta); }
+  .final .bloco { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+  .final h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.1; font-weight: 600; letter-spacing: -.02em; margin-top: 14px; }
+  .final h2 span { color: var(--principal); }
+  .final p { margin-top: 18px; color: var(--tinta-sec); font-size: 17px; line-height: 1.6; max-width: 32em; }
+  .final .acoes { margin-top: 30px; }
+  .rodape { border-top: 1px solid var(--borda); padding: 26px clamp(16px, 5vw, 80px); display: flex; justify-content: space-between;
+            flex-wrap: wrap; gap: 12px; font-size: 14px; color: var(--tinta-sec); }
+
+  @media (max-width: 1000px) {
+    .final .bloco { grid-template-columns: 1fr; }
+    .pilares { grid-template-columns: 1fr; }
+    .moldura { height: auto; }
+    .moldura > img { position: relative; height: auto; }
+    .copiloto { position: relative; width: 100%; border-left: 0; }
+    .passos { grid-template-columns: 1fr; }
+    .calc, .fundador, .motivos { grid-template-columns: 1fr; }
+    .passo, .passo + .passo { padding: 28px 0 8px; border-left: 0; border-top: 1px solid var(--f-borda); }
+  }
+  @media (max-width: 560px) {
+    .cp-tabela th, .cp-tabela td { padding: 9px 7px; font-size: 12px; white-space: nowrap; }
+    .cp-tabela th:nth-child(2), .cp-tabela td:nth-child(2) { display: none; }
+    .pilar { padding: 30px 24px 32px; min-height: 0; } .pilar h3 { padding-top: 110px; } }
+</style>
+</head>
+<body>
+<section class="hero">
+  <div id="cena" aria-hidden="true"></div>
+  <nav>
+    <div class="logo"><svg class="marca-simbolo" viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#2bb3a3"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></div>
+    <div class="menu">
+      <a href="#solucoes">Soluções</a><a href="#como">Como trabalhamos</a><a href="#demo">Demo</a><a href="#faq">Perguntas</a>
+      <a class="btn" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a>
+    </div>
+  </nav>
+  <div class="texto">
+    <span class="selo">Dados e IA para restaurantes</span>
+    <h1>Descubra onde sua operação perde margem <span class="rotativa" id="palavra">na compra.</span></h1>
+    <p class="sub" id="subtitulo">Do dado espalhado à decisão do dia: a IA sugere, você decide, e o
+      fechamento deixa de ser surpresa.</p>
+    <div class="acoes">
+      <a class="btn cheio" href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver a demonstração ↗</a>
+      <a class="btn" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a>
+    </div>
+  </div>
+  <div class="atendemos">
+    <b>Atendemos</b><span>Restaurantes</span><span>Redes de restaurantes</span><span>Restaurantes de hotel</span><span>2 a 10 unidades</span>
+  </div>
+</section>
+<main class="claro">
+  <!-- vitrine: o produto em uso, com a pergunta e a decisão ao lado -->
+  <section class="bloco" id="demo">
+    <span class="sobre">Exemplos de decisão</span>
+    <h2>Pergunte como você perguntaria ao seu gerente. <em>A resposta vem com o número e a decisão.</em></h2>
+    <p class="intro">Oito painéis prontos, com três restaurantes fictícios em 24 meses de operação. Ao lado de cada um,
+      a leitura que chega até você. O mesmo esqueleto é implantado com os dados da sua empresa.</p>
+
+    <div class="abas" role="tablist" id="abas"></div>
+    <div class="moldura" role="tabpanel">
+      <img id="p-img" alt="">
+      <span class="selo-ficticio">dados fictícios</span>
+    </div>
+    <p class="legenda-aba" id="p-legenda"></p>
+  </section>
+
+  <!-- quatro pilares -->
+  <section class="bloco" id="solucoes">
+    <span class="sobre">O que entregamos</span>
+    <h2>Quatro frentes, um objetivo: <em>margem</em>.</h2>
+    <div class="pilares">
+      <article class="pilar" style="--cor:#1e5a44"><svg class="malha" data-semente="1" aria-hidden="true"></svg>
+        <span class="tag">Pare de pagar a mais</span>
+        <h3>Compras e estoque</h3>
+        <p>Preço pago contra o melhor preço do período, inflação da sua cesta, capital parado e quanto daria para
+          economizar, item a item.</p>
+        <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
+      <article class="pilar" style="--cor:#c8703f"><svg class="malha" data-semente="2" aria-hidden="true"></svg>
+        <span class="tag">Custo sob controle</span>
+        <h3>CMV e ficha técnica</h3>
+        <p>CMV teórico contra o real e a diferença por insumo: onde o custo escapa entre a compra e o prato.
+          Com o cardápio cruzado entre popularidade e margem.</p>
+        <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
+      <article class="pilar" style="--cor:#1f7f99"><svg class="malha" data-semente="3" aria-hidden="true"></svg>
+        <span class="tag">Resultado na mesa</span>
+        <h3>DRE gerencial</h3>
+        <p>Realizado contra orçado e ano anterior, conta a conta, com o lucro de cada unidade e a leitura
+          do mês em texto.</p>
+        <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
+      <article class="pilar" style="--cor:#a8791a"><svg class="malha" data-semente="4" aria-hidden="true"></svg>
+        <span class="tag">IA com contexto</span>
+        <h3>IA aplicada <span class="em-breve">incluída</span></h3>
+        <p>Não é uma IA que joga respostas. É a experiência de quem viveu a cozinha, a compra e o resultado, com a IA explicando
+          os números do seu painel. Ela não inventa nenhum; quem decide é você.</p>
+        <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
+    </div>
+  </section>
+
+  <!-- como trabalhamos -->
+  <section class="bloco" id="como">
+    <span class="sobre">Como trabalhamos</span>
+    <h2>Uma solução fechada, um objetivo: margem. <em>O foco, ajustado à sua operação.</em></h2>
+    <div class="passos">
+      <div class="passo"><span class="num">01</span>
+        <h3>Diagnóstico</h3>
+        <p>Começamos conferindo os seus lançamentos: notas fora do padrão, preços que parecem erro de unidade ou de
+          digitação, e onde a margem já mostra sinais de vazamento.</p>
+        <p class="prazo">Entrega: a lista do que conferir e corrigir, e onde a margem escapa</p></div>
+      <div class="passo"><span class="num">02</span>
+        <h3>Implantação</h3>
+        <p>Os painéis da vitrine ligados aos seus sistemas, com os seus números, as suas unidades e as suas metas.</p>
+        <p class="prazo">Entrega: painéis no ar, com acesso da sua equipe</p></div>
+      <div class="passo"><span class="num">03</span>
+        <h3>Acompanhamento</h3>
+        <p>Todo dia, as três prioridades no seu celular; todo mês, a reunião de margem com a decisão recomendada, levada
+          para a mesa de compras e da diretoria.</p>
+        <p class="prazo">Entrega: acompanhamento por assinatura mensal</p></div>
+    </div>
+  </section>
+
+  <!-- calculadora de margem (só aritmética do próprio visitante, sem prometer resultado) -->
+  <section class="bloco" id="calculadora">
+    <span class="sobre">Quanto vale um ponto de CMV</span>
+    <h2>Faça a conta com os seus números. <em>Cada ponto de CMV é dinheiro todo mês.</em></h2>
+    <div class="calc">
+      <div>
+        <div class="campo"><label for="c-fat">Faturamento mensal dos restaurantes (somando as unidades)</label>
+          <input type="range" id="c-fat" min="100000" max="3000000" step="50000" value="600000">
+          <div class="valor-campo" id="v-fat"></div></div>
+        <div class="campo"><label for="c-cmv">CMV atual</label>
+          <input type="range" id="c-cmv" min="20" max="50" step="0.5" value="36">
+          <div class="valor-campo" id="v-cmv"></div></div>
+        <div class="campo"><label for="c-pts">Se o CMV caísse quantos pontos?</label>
+          <input type="range" id="c-pts" min="0.5" max="5" step="0.5" value="2">
+          <div class="valor-campo" id="v-pts"></div></div>
+      </div>
+      <div class="resultado" aria-live="polite">
+        <div class="rot">Cada 1 ponto de CMV vale</div>
+        <div class="grande" id="r-ponto"></div>
+        <div class="rot" id="r-rot-cenario"></div>
+        <div class="medio" id="r-cenario"></div>
+        <p class="nota">Conta simples: faturamento × pontos de CMV. Não é promessa de resultado — é o tamanho do que está
+          em jogo. Quanto disso dá para recuperar depende da sua operação, e é isso que o Diagnóstico mostra.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- por que nós -->
+  <section class="bloco" id="porque">
+    <span class="sobre">Por que nós</span>
+    <h2>Não é uma IA genérica. <em>É experiência de operação com a IA trabalhando junto.</em></h2>
+    <div class="motivos">
+      <div class="motivo"><h3>Quem viveu a operação</h3>
+        <p>Anos de cozinha, compra, estoque e resultado de restaurante. Os alertas e as perguntas certas vêm de quem já
+          fechou CMV na mão — não de um modelo genérico.</p></div>
+      <div class="motivo"><h3>Seus dados, organizados</h3>
+        <p>Começamos pelo que você já tem — notas, planilhas, sistema de caixa — hoje espalhado. Arrumado, ele vira
+          acompanhamento no dia a dia, para o fechamento deixar de ser surpresa.</p></div>
+      <div class="motivo"><h3>A IA sugere, você decide</h3>
+        <p>O Copiloto lê os painéis por você, aponta onde agir e mostra de onde vem cada número. Ele não calcula por
+          conta própria nem decide no seu lugar. Você para de caçar dado e foca no que é estratégico.</p></div>
+    </div>
+  </section>
+
+  <!-- oferta fundador -->
+  <section class="bloco" id="fundador">
+    <div class="fundador">
+      <div>
+        <span class="sobre">Clientes fundadores</span>
+        <h2>Três vagas com condição de fundador.</h2>
+        <p>Para os três primeiros grupos de restaurantes, 30% de desconto no Diagnóstico e na Implantação. Em troca,
+          pedimos para contar a sua história como case — com a sua autorização e do jeito que você aprovar.</p>
+        <div class="acoes"><a class="btn" href="mailto:contato@fratia.com.br?subject=Vaga%20de%20cliente%20fundador">Quero uma vaga ↗</a></div>
+      </div>
+      <ul>
+        <li><b>30% de desconto</b> no Diagnóstico e na Implantação</li>
+        <li><b>Atendimento direto</b> de quem faz, do primeiro dia ao Copiloto</li>
+        <li><b>Case autorizado</b>: só publicamos o que você aprovar</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- perguntas frequentes -->
+  <section class="bloco" id="faq">
+    <span class="sobre">Perguntas frequentes</span>
+    <h2>O que costumam perguntar <em>antes da primeira conversa</em>.</h2>
+    <div class="faq">
+      <details><summary>Preciso trocar meu sistema de caixa ou de estoque?</summary>
+        <p>Não. Trabalhamos com os dados que você já tem — sistema de caixa, notas fiscais, planilhas de estoque e
+          fichas técnicas. Se algo faltar, o Diagnóstico mostra o quê e como resolver.</p></details>
+      <details><summary>E se os meus dados estiverem bagunçados?</summary>
+        <p>É o mais comum, e é por isso que tudo começa conferindo os lançamentos: notas fora do padrão e preços que
+          parecem erro de unidade, com a lista do que corrigir. Organizar o que já existe faz parte do trabalho.</p></details>
+      <details><summary>Quanto tempo leva?</summary>
+        <p>O Diagnóstico é a primeira entrega, com prazo e preço fechados antes de começar. A Implantação vem em
+          seguida, e o acompanhamento segue depois. Os prazos de cada etapa são combinados na primeira conversa,
+          conforme o número de unidades e os sistemas.</p></details>
+      <details><summary>Quanto custa?</summary>
+        <p>Depende dos módulos que os seus dados sustentam. A base (vendas, vendas por produto e compras) quase todo
+          restaurante consegue ligar; estoque, CMV, ficha técnica, cardápio, DRE e voz do cliente entram conforme os dados
+          existem — o Diagnóstico mostra o que dá para ligar já. O acompanhamento é por assinatura mensal, com a IA
+          incluída: Essencial (informe diário e reunião mensal) ou Completo (perguntas livres ao Copiloto e acompanhamento
+          mais próximo). Valores apresentados na primeira conversa.</p></details>
+      <details><summary>A IA vai decidir por mim?</summary>
+        <p>Não. O Copiloto sugere onde agir e mostra de onde vem cada número — tudo vem dos seus painéis, ele não
+          inventa nem calcula sozinho. A decisão é sempre sua.</p></details>
+      <details><summary>Meus dados ficam seguros?</summary>
+        <p>Usamos só os dados necessários para os painéis, com acesso restrito à sua equipe. Na IA, vai apenas o que
+          a pergunta precisa, e o fornecedor de IA é combinado com você. Detalhes na
+          <a href="privacidade.html">política de privacidade</a>.</p></details>
+      <details><summary>Funciona para um restaurante só?</summary>
+        <p>O foco são grupos de 2 a 10 unidades, onde comparar casas e fornecedores mais rende. Se você tem uma casa
+          só, vale conversar: em muitos casos o Diagnóstico já se paga.</p></details>
+      <details><summary>Preciso ter um analista de dados?</summary>
+        <p>Não. Os painéis e a leitura do mês chegam prontos, em linguagem de operação. A ideia é justamente você não
+          precisar montar uma área de dados.</p></details>
+    </div>
+  </section>
+</main>
+
+<!-- chamada final + rodapé -->
+<footer class="final">
+  <div class="bloco">
+    <div>
+      <span class="selo">Vamos começar?</span>
+      <h2>Sua margem já está nos seus dados. <span>A gente mostra onde.</span></h2>
+      <p>Conte como é a sua operação. Em uma conversa de 30 minutos você sai sabendo por onde começar,
+        contratando ou não.</p>
+      <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a><a class="btn" href="#demo">Ver a demonstração ↗</a></div>
+    </div>
+  </div>
+  <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · LinkedIn · Instagram @fratia.food · <a href="privacidade.html">Privacidade</a></span></div>
+</footer>
+
+<script>
+// ---------- subtítulo: opções para escolher (abrir com ?sub=A, ?sub=B ou ?sub=C) ----------
+(() => {
+  const opcoes = {
+    A: 'Organizamos os dados que você já tem e, todo dia, a IA aponta onde agir. Você para de caçar número e chega ao fechamento sem surpresa.',
+    B: 'Seus dados, finalmente organizados. Todo dia, a IA sugere onde agir; você foca no que é estratégico.',
+    C: 'Do dado espalhado à decisão do dia: a IA sugere, você decide, e o fechamento deixa de ser surpresa.',
+  };
+  const escolha = new URLSearchParams(location.search).get('sub');
+  if (opcoes[escolha]) document.getElementById('subtitulo').textContent = opcoes[escolha];
+})();
+
+// ---------- calculadora: quanto vale cada ponto de CMV ----------
+(() => {
+  const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  const num = v => v.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+  const el = id => document.getElementById(id);
+  function calcular() {
+    const fat = +el('c-fat').value, cmv = +el('c-cmv').value, pts = +el('c-pts').value;
+    el('v-fat').textContent = brl(fat) + ' por mês';
+    el('v-cmv').textContent = num(cmv) + '% da receita';
+    el('v-pts').textContent = num(pts) + (pts === 1 ? ' ponto' : ' pontos') + ` (de ${num(cmv)}% para ${num(cmv - pts)}%)`;
+    el('r-ponto').textContent = brl(fat * 0.01) + ' por mês';
+    el('r-rot-cenario').textContent = `${num(pts)} ${pts === 1 ? 'ponto' : 'pontos'} a menos de CMV`;
+    el('r-cenario').textContent = `${brl(fat * pts / 100)} por mês · ${brl(fat * pts / 100 * 12)} por ano`;
+  }
+  ['c-fat', 'c-cmv', 'c-pts'].forEach(id => el(id).addEventListener('input', calcular));
+  calcular();
+})();
+</script>
+
+<script>
+// ---------- vitrine: abas + Copiloto (exemplos com dados fictícios) ----------
+(() => {
+  const base = 'telas/';   // prints reais da vitrine com o Copiloto aberto (scripts/capturar_site.py)
+  const icones = {
+    compras: '<path d="M3 4h2l2.4 11h10.2L20 8H7"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
+    vendas: '<path d="M4 19V9m5 10V5m5 14v-8m5 8v-5"/>',
+    produtos: '<path d="M4 7h16M4 12h10M4 17h6"/>',
+    cmv: '<path d="M4 20h16M6 20V10m6 10V4m6 16v-7"/>',
+    ficha: '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/>',
+    cardapio: '<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',
+    dre: '<path d="M4 19l5-6 4 3 7-9"/><path d="M15 7h5v5"/>',
+    voz: '<path d="M4 5h16v11H9l-5 4z"/>',
+  };
+  // Cada aba: o painel e, ao lado, o Copiloto respondendo de verdade (dados fictícios da demo).
+  const exemplos = [
+    { nome: 'Compras', icone: 'compras', img: 'compras.png',
+      legenda: '<b>"Em quais itens paguei mais caro do que deveria?"</b> O Copiloto cruza o preço pago com o melhor preço da rede e diz onde está a economia.' },
+    { nome: 'Vendas', icone: 'vendas', img: 'vendas.png',
+      legenda: '<b>"Vou bater a meta este mês?"</b> Meta até o dia, projeção de fechamento e o turno que puxou o mês para baixo.' },
+    { nome: 'Vendas por produto', icone: 'produtos', img: 'produtos.png',
+      legenda: '<b>"Minha venda cresceu por volume ou por preço?"</b> O que mais vende e de onde veio a diferença: volume, mix e preço.' },
+    { nome: 'Custos e CMV', icone: 'cmv', img: 'cmv.png',
+      legenda: '<b>"Por que o CMV subiu e o que eu faço?"</b> O que explica cada ponto de CMV e onde agir primeiro.' },
+    { nome: 'Ficha Técnica', icone: 'ficha', img: 'ficha.png',
+      legenda: '<b>"Onde o consumo passou da ficha?"</b> CMV real contra o das fichas, insumo por insumo: porção, rendimento e perda.' },
+    { nome: 'Cardápio', icone: 'cardapio', img: 'cardapio.png',
+      legenda: '<b>"Quais pratos da cantina eu deveria rever?"</b> Popularidade x margem de cada prato, com a ação sugerida.' },
+    { nome: 'DRE', icone: 'dre', img: 'dre.png',
+      legenda: '<b>"Fechamos o mês acima ou abaixo do orçado?"</b> Do lucro orçado ao realizado, conta a conta, e a casa que mais pesou.' },
+    { nome: 'Voz do Cliente', icone: 'voz', img: 'voz.png',
+      legenda: '<b>"O que mais pesa na nota dos clientes?"</b> A nota de 0 a 10 contra a meta e os temas que mais elogiam e criticam.' },
+  ];
+  const lista = document.getElementById('abas'), legenda = document.getElementById('p-legenda'), img = document.getElementById('p-img');
+  function mostrar(i) {
+    const e = exemplos[i];
+    img.src = base + e.img;
+    img.alt = 'Painel ' + e.nome + ' da vitrine com o Copiloto respondendo, dados fictícios';
+    legenda.innerHTML = e.legenda + ' <span style="opacity:.7">Resposta real da IA sobre os dados fictícios da demo; quem decide é você.</span>';
+    [...lista.children].forEach((b, k) => b.setAttribute('aria-selected', k === i));
+  }
+  exemplos.forEach((e, i) => {
+    const b = document.createElement('button'); b.className = 'aba'; b.setAttribute('role', 'tab');
+    b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${icones[e.icone]}</svg>${e.nome}<span class="seta">›</span>`;
+    b.onclick = () => mostrar(i); lista.appendChild(b);
+  });
+  mostrar(0);
+
+  // ---------- malha de rede no canto de cada pilar (mesma linguagem da abertura) ----------
+  document.querySelectorAll('svg.malha').forEach(svg => {
+    let semente = +svg.dataset.semente * 9301;
+    const aleatorio = () => (semente = (semente * 9301 + 49297) % 233280) / 233280;
+    const cor = getComputedStyle(svg.closest('.pilar')).getPropertyValue('--cor').trim();
+    const W = 520, H = 300, COLS = 13, LINS = 9, fase = aleatorio() * 6;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('preserveAspectRatio', 'xMaxYMin meet');
+    const pts = [];
+    for (let l = 0; l < LINS; l++) {
+      pts.push([]);
+      for (let c = 0; c < COLS; c++) {
+        const u = c / (COLS - 1), v = l / (LINS - 1);
+        // some à esquerda e embaixo, com borda irregular: a malha "entra" pelo canto superior direito
+        const visivel = u * 1.25 - v * .55 + (aleatorio() - .5) * .35 > .28;
+        const x = 30 + u * (W - 40) + Math.sin(v * 3 + fase) * 14 + (aleatorio() - .5) * 10;
+        const y = 10 + v * (H - 20) * .95 + Math.sin(u * 5 + fase) * 22 * u + (aleatorio() - .5) * 10;
+        pts[l].push(visivel ? [x, y] : null);
+      }
+    }
+    const linhas = [], nos = [];
+    for (let l = 0; l < LINS; l++) for (let c = 0; c < COLS; c++) {
+      const a = pts[l][c]; if (!a) continue;
+      for (const [dl, dc] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+        const b = pts[l + dl]?.[c + dc];
+        if (b && (dl === 0 || dc === 0 || aleatorio() < .35))
+          linhas.push(`<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}"/>`);
+      }
+      nos.push(`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="${aleatorio() < .15 ? 4 : 2.8}"/>`);
+    }
+    svg.innerHTML = `<g stroke="${cor}" stroke-opacity=".5" stroke-width="1.2">${linhas.join('')}</g><g fill="${cor}">${nos.join('')}</g>`;
+  });
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script>
+(() => {
+  const caixa = document.getElementById('cena');
+  const palavra = document.getElementById('palavra');
+  const reduzMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const frases = ['na compra.', 'no estoque.', 'no cardápio.', 'no resultado.'];
+
+  const COR = 0x2bb3a3, BRANCO = 0xffffff;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  caixa.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
+  const alvoCamera = new THREE.Vector3(0, 0, 0);
+  // textura de disco suave para os pontos ficarem redondos
+  const disco = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+    const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, "#fff"); r.addColorStop(.55, "#fff"); r.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = r; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+
+  // ---------- 1. piso de malha ondulante (fundo) ----------
+  const N = 13, LADO = 58;
+  const malha = new Float32Array((N + 1) * (N + 1) * 3);      // vértices da grade
+  const linhasMalha = new Float32Array(N * (N + 1) * 2 * 6);  // segmentos horizontais + verticais
+  const geoMalha = new THREE.BufferGeometry();
+  geoMalha.setAttribute('position', new THREE.BufferAttribute(linhasMalha, 3));
+  scene.add(new THREE.LineSegments(geoMalha, new THREE.LineBasicMaterial({ color: COR, transparent: true, opacity: .45 })));
+  const geoNos = new THREE.BufferGeometry();
+  geoNos.setAttribute('position', new THREE.BufferAttribute(malha, 3));
+  scene.add(new THREE.Points(geoNos, new THREE.PointsMaterial({ map: disco, transparent: true, color: COR, size: .3 })));
+
+  function atualizarMalha(t) {
+    for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
+      const x = (i / N - .5) * LADO, z = (j / N - .5) * LADO - 7, o = (i * (N + 1) + j) * 3;
+      malha[o] = x;
+      malha[o + 1] = -4.2 + Math.sin(x * .16 + t * .35) * 1.1 + Math.cos(z * .14 + t * .25) * 1.1;
+      malha[o + 2] = z;
+    }
+    let k = 0; const v = (i, j) => (i * (N + 1) + j) * 3;
+    for (let i = 0; i <= N; i++) for (let j = 0; j < N; j++) {
+      linhasMalha.set(malha.subarray(v(i, j), v(i, j) + 3), k); linhasMalha.set(malha.subarray(v(i, j + 1), v(i, j + 1) + 3), k + 3); k += 6;
+      linhasMalha.set(malha.subarray(v(j, i), v(j, i) + 3), k); linhasMalha.set(malha.subarray(v(j + 1, i), v(j + 1, i) + 3), k + 3); k += 6;
+    }
+    geoMalha.attributes.position.needsUpdate = true; geoNos.attributes.position.needsUpdate = true;
+  }
+
+  // ---------- 2. rede neural 3D (objeto principal): dados entram, a IA processa, a decisão acende ----------
+  const rede = new THREE.Group(); scene.add(rede);
+  const DOURADO = new THREE.Color(0xf0b429), VERDE = new THREE.Color(COR), BRANCA = new THREE.Color(1, 1, 1);
+  const camadas = [[4, 1], [5, 1], [3, 1], [1, 1]];   // diagrama clássico: colunas de nós, poucas e legíveis
+  const ESP_X = 3.2, ESP = 1.45;
+  const nos = [];
+  camadas.forEach(([a, b], c) => {
+    for (let i = 0; i < a; i++) for (let j = 0; j < b; j++)
+      nos.push({ camada: c, p: new THREE.Vector3((c - (camadas.length - 1) / 2) * ESP_X,
+        (i - (a - 1) / 2) * ESP, (j - (b - 1) / 2) * ESP) });
+  });
+  const saida = nos[nos.length - 1];
+  const ULTIMA = camadas.length - 1;
+
+  // ligações entre camadas vizinhas (só uma parte, para não poluir)
+  const arestas = [];
+  for (const a of nos) for (const b of nos)
+    if (b.camada === a.camada + 1) arestas.push([a, b, Math.random()]);
+  const posArestas = new Float32Array(arestas.length * 6);
+  arestas.forEach(([a, b], k) => posArestas.set([a.p.x, a.p.y, a.p.z, b.p.x, b.p.y, b.p.z], k * 6));
+  const geoArestas = new THREE.BufferGeometry();
+  geoArestas.setAttribute('position', new THREE.BufferAttribute(posArestas, 3));
+  const matArestas = new THREE.LineBasicMaterial({ color: COR, transparent: true, opacity: .32 });
+  rede.add(new THREE.LineSegments(geoArestas, matArestas));
+
+  // nós
+  const posNos = new Float32Array(nos.length * 3), corNos = new Float32Array(nos.length * 3);
+  nos.forEach((n, k) => posNos.set([n.p.x, n.p.y, n.p.z], k * 3));
+  const geoNosRede = new THREE.BufferGeometry();
+  geoNosRede.setAttribute('position', new THREE.BufferAttribute(posNos, 3));
+  geoNosRede.setAttribute('color', new THREE.BufferAttribute(corNos, 3));
+  rede.add(new THREE.Points(geoNosRede, new THREE.PointsMaterial({ map: disco, transparent: true, size: .75, vertexColors: true })));
+  // brilho do nó de saída (a decisão)
+  const brilho = new THREE.Points(new THREE.BufferGeometry().setFromPoints([saida.p]),
+    new THREE.PointsMaterial({ map: disco, transparent: true, color: DOURADO, size: .9, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+  rede.add(brilho);
+
+  // pulsos: um conjunto de fundo (rede sempre viva) e a onda principal de cada ciclo
+  function criarPulsos(tamanho) {
+    const pos = new Float32Array(arestas.length * 3), cor = new Float32Array(arestas.length * 3);
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(cor, 3));
+    rede.add(new THREE.Points(g, new THREE.PointsMaterial({ map: disco, transparent: true, size: tamanho, vertexColors: true, transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false })));
+    return { pos, cor, g };
+  }
+  const fundo = criarPulsos(.14), onda = criarPulsos(.26);
+
+  // traços brancos que saem da decisão quando ela acende
+  const QTD_RAIOS = 28;
+  const raios = Array.from({ length: QTD_RAIOS }, () => ({
+    d: new THREE.Vector3(Math.random() - .3, Math.random() - .5, Math.random() - .5).normalize(),
+    comp: .6 + Math.random() * 2.2, fase: Math.random() * 6.28 }));
+  const posRaios = new Float32Array(QTD_RAIOS * 6);
+  const geoRaios = new THREE.BufferGeometry();
+  geoRaios.setAttribute('position', new THREE.BufferAttribute(posRaios, 3));
+  const matRaios = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
+  rede.add(new THREE.LineSegments(geoRaios, matRaios));
+
+  // w: posição da onda medida em camadas (0 a ULTIMA); decisao: 0..1, quanto o nó de saída está aceso
+  function atualizarRede(t, w, decisao) {
+    arestas.forEach(([a, b, fase], k) => {
+      const u = (t * .25 + fase) % 1;                         // pulso de fundo, lento e fraco
+      fundo.pos.set([a.p.x + (b.p.x - a.p.x) * u, a.p.y + (b.p.y - a.p.y) * u, a.p.z + (b.p.z - a.p.z) * u], k * 3);
+      const i = .28 * Math.sin(u * Math.PI);
+      fundo.cor.set([VERDE.r * i, VERDE.g * i, VERDE.b * i], k * 3);
+      const v = w - a.camada, vv = Math.min(1, Math.max(0, v));  // onda principal
+      onda.pos.set([a.p.x + (b.p.x - a.p.x) * vv, a.p.y + (b.p.y - a.p.y) * vv, a.p.z + (b.p.z - a.p.z) * vv], k * 3);
+      const j = v > 0 && v < 1 ? Math.sin(v * Math.PI) : 0;
+      onda.cor.set([j, j, j], k * 3);
+    });
+    for (const p of [fundo, onda]) { p.g.attributes.position.needsUpdate = true; p.g.attributes.color.needsUpdate = true; }
+    nos.forEach((n, k) => {                                   // a camada por onde a onda passa clareia
+      const perto = Math.max(0, 1 - Math.abs(w - n.camada) * 1.6);
+      const c = n === saida ? VERDE.clone().lerp(DOURADO, decisao) : VERDE.clone().lerp(BRANCA, perto * .7);
+      corNos.set([c.r, c.g, c.b], k * 3);
+    });
+    geoNosRede.attributes.color.needsUpdate = true;
+    brilho.material.opacity = decisao * (.75 + .25 * Math.sin(t * 6));
+    matRaios.opacity = decisao * .85;
+    raios.forEach((r, k) => {
+      const ini = .5, fim = ini + r.comp * decisao * (.6 + .4 * Math.sin(t * 2 + r.fase));
+      posRaios.set([saida.p.x + r.d.x * ini, saida.p.y + r.d.y * ini, saida.p.z + r.d.z * ini,
+                    saida.p.x + r.d.x * fim, saida.p.y + r.d.y * fim, saida.p.z + r.d.z * fim], k * 6);
+    });
+    geoRaios.attributes.position.needsUpdate = true;
+  }
+
+  // ---------- layout responsivo ----------
+  function ajustar() {
+    const w = caixa.clientWidth, h = caixa.clientHeight, cel = w < 860;
+    renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+    rede.position.set(cel ? 0 : 6.4, cel ? 3.2 : 1.7, 0);
+    rede.scale.setScalar(cel ? .55 : 1);
+    alvoCamera.set(cel ? 0 : 1.5, 0, 0);
+  }
+  addEventListener('resize', ajustar); ajustar();
+
+  // ---------- ciclo: calma -> onda atravessa a rede -> decisão acende (troca a palavra) -> apaga ----------
+  const CALMA = 1800, ONDA = 2600, DECISAO = 2600, APAGA = 900, CICLO = CALMA + ONDA + DECISAO + APAGA;
+  const suave = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  function estado(ms) {
+    const m = ms % CICLO;
+    if (m < CALMA) return { w: -1, decisao: 0 };
+    if (m < CALMA + ONDA) { const f = (m - CALMA) / ONDA; return { w: f * ULTIMA, decisao: Math.max(0, f - .92) / .08 }; }
+    if (m < CALMA + ONDA + DECISAO) return { w: ULTIMA + 1, decisao: 1 };
+    return { w: ULTIMA + 1, decisao: 1 - suave((m - CALMA - ONDA - DECISAO) / APAGA) };
+  }
+  let indiceFrase = 0, cicloAnterior = 0;
+  function trocarFrase() {
+    indiceFrase = (indiceFrase + 1) % frases.length;
+    palavra.classList.add('saindo');
+    setTimeout(() => { palavra.textContent = frases[indiceFrase]; palavra.classList.remove('saindo'); }, 500);
+  }
+
+  // mouse: a câmera acompanha o cursor (paralaxe)
+  let mx = 0, my = 0;
+  addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
+  camera.position.set(0, 1.2, 17);
+
+  const t0 = performance.now();
+  function quadro(agora) {
+    const ms = agora - t0, t = ms / 1000, { w, decisao } = estado(ms);
+    const marco = CALMA + ONDA;                               // troca a frase quando a decisão acende
+    if (ms > marco) { const ciclo = Math.floor((ms - marco) / CICLO); if (ciclo >= cicloAnterior) { cicloAnterior = ciclo + 1; trocarFrase(); } }
+
+    atualizarMalha(t);
+    atualizarRede(t, w, decisao);
+    rede.rotation.y = -.3 + Math.sin(t * .2) * .22;
+    rede.rotation.x = .05 + Math.sin(t * .15) * .05;
+
+    camera.position.x += (mx * 4 - camera.position.x) * .04;
+    camera.position.y += (1.2 - my * 2.5 - camera.position.y) * .04;
+    camera.lookAt(alvoCamera);
+    renderer.render(scene, camera);
+    requestAnimationFrame(quadro);
+  }
+
+  if (reduzMovimento) {   // sem animação: rede parada com a decisão acesa
+    atualizarMalha(0); rede.rotation.y = -.55; rede.rotation.x = .12; atualizarRede(0, ULTIMA + 1, 1);
+    camera.lookAt(alvoCamera); renderer.render(scene, camera);
+  } else {
+    requestAnimationFrame(quadro);
+  }
+})();
+</script>
+</body>
+</html>
