@@ -16,7 +16,7 @@
   .topo { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(16px, 5vw, 64px);
           border-bottom: 1px solid var(--borda); }
   .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; text-decoration: none; color: var(--tinta); }
-  .logo svg { width: 30px; height: 30px; } .logo .ia { color: var(--destaque); }
+  .logo svg { width: 30px; height: 30px; } .logo .ia { color: #d99a12; }
   main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
   .sobre { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--principal); }
   h1 { margin-top: 12px; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; }
@@ -57,13 +57,15 @@
   .duas li small { display: block; font-size: 12.5px; color: var(--suave); margin-top: 2px; }
   @media (max-width: 640px) {
     .opcoes, .duas { grid-template-columns: 1fr; }
-    .area { grid-template-columns: 96px 1fr 88px; font-size: 14px; }
+    .area { grid-template-columns: 84px 1fr auto; font-size: 14px; }
+    .area em { white-space: nowrap; font-size: 12px; }
+    .duas .card { margin-top: 0; } .duas { gap: 18px; margin-top: 18px; }
   }
 </style>
 </head>
 <body>
 <header class="topo">
-  <a class="logo" href="index.html"><svg viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#1e5a44"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></a>
+  <a class="logo" href="index.html"><svg viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#2bb3a3"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></a>
   <a href="index.html" class="nota">← voltar ao site</a>
 </header>
 <main>
@@ -94,7 +96,7 @@
       <div class="acoes" style="margin-top:20px"><a class="btn" id="enviar" href="#">Quero conversar sobre este resultado ↗</a>
         <button class="btn claro" id="refazer" type="button">Refazer</button></div>
       <p class="nota" style="margin-top:14px">O botão abre o seu e-mail com as respostas já preenchidas para
-        contato@fratia.com.br. Veja a <a href="privacidade.html">política de privacidade</a>.</p>
+        contato@fratia.com.br; você pode editar ou apagar o que quiser antes de enviar. Veja a <a href="privacidade.html">política de privacidade</a>.</p>
     </div>
   </section>
 </main>
@@ -187,14 +189,15 @@ botao.addEventListener('click', (ev) => {
   document.getElementById('r-comecar-t').textContent = 'Por onde começar: ' + pior;
   document.getElementById('r-comecar').textContent = AREAS[pior];
   // painéis possíveis já e depois, pelos dados que a pessoa disse ter
-  const temERP = r.sistema === 0, temPDV = r.sistema <= 1, temPlanilha = r.sistema <= 2;
+  const temERP = r.sistema === 0, temPDV = r.sistema <= 1;
   const ja = [], depois = [];
   const por = (cond, nome, motivo) => (cond ? ja : depois).push(cond ? `${nome}` : `${nome}<small>${motivo}</small>`);
   por(temPDV, 'Vendas e vendas por produto', 'precisa das vendas num sistema de caixa');
-  por(temERP || temPlanilha, 'Suprimentos (compras e preços)', 'precisa das notas de compra organizadas');
+  por(temERP, 'Suprimentos (compras e preços)', 'precisa das compras num sistema de gestão (ERP) ou das notas fiscais eletrônicas');
   por(temERP && r.inventario <= 1, 'Estoque, Custos e CMV', 'precisa de estoque no sistema e inventário ao menos mensal');
-  por(r.fichas <= 1, 'Ficha técnica e cardápio', 'precisa das fichas técnicas (a gente ajuda a montar)');
+  por(r.fichas <= 1 && temPDV, 'Ficha técnica e cardápio', 'precisa das fichas técnicas e da venda por prato (a gente ajuda a montar as fichas)');
   por(r.dre <= 1, 'DRE gerencial', 'precisa de uma DRE mensal (o orçamento pode entrar por planilha)');
+  depois.push('Voz do cliente<small>precisa das avaliações: pesquisa própria ou sites de avaliação</small>');
   document.getElementById('r-ja').innerHTML = ja.length ? ja.map(x => `<li>${x}</li>`).join('') : '<li>Primeiro, organizar os dados de venda e compra</li>';
   document.getElementById('r-depois').innerHTML = depois.length ? depois.map(x => `<li>${x}</li>`).join('') : '<li>Tudo pronto para começar</li>';
   // e-mail com as respostas

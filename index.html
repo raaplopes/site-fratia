@@ -204,7 +204,23 @@
   @media (max-width: 560px) {
     .cp-tabela th, .cp-tabela td { padding: 9px 7px; font-size: 12px; white-space: nowrap; }
     .cp-tabela th:nth-child(2), .cp-tabela td:nth-child(2) { display: none; }
-    .pilar { padding: 30px 24px 32px; min-height: 0; } .pilar h3 { padding-top: 110px; } }
+    .pilar { padding: 30px 24px 32px; min-height: 0; } .pilar h3 { padding-top: 64px; } }
+  /* celular (revisão visual de 10/out/2026) */
+  @media (max-width: 640px) {
+    .texto h1, .texto .sub, .texto .selo { text-shadow: 0 0 18px #10161c, 0 0 6px #10161c, 0 0 2px #10161c; }
+    .abas { display: grid; grid-template-columns: 1fr 1fr; justify-content: start; gap: 0 8px; }
+    .aba { justify-content: flex-start; padding: 12px 6px; font-size: 14.5px; }
+    .moldura:not(.tour) { aspect-ratio: 2 / 3; max-width: 440px; margin-left: auto; margin-right: auto; }
+    #tour { display: none; }
+    .calc .resultado .grande { font-size: 34px; }
+    .calc .resultado .medio { font-size: 21px; line-height: 1.4; }
+    .final .acoes .btn, .fundador .acoes .btn { width: 100%; justify-content: center; }
+    .fundador { padding-left: 20px !important; padding-right: 20px !important; }
+    .fundador > div { display: flex; flex-direction: column; }
+    .fundador > div .acoes { order: 9; }
+  }
+  .fontes { line-height: 1.6; }
+  .aba:focus-visible, .btn:focus-visible, summary:focus-visible { outline: 3px solid var(--f-destaque, #c8703f); outline-offset: 3px; }
 </style>
 </head>
 <body>
@@ -346,7 +362,7 @@
   <!-- por que nós -->
   <section class="bloco" id="porque">
     <span class="sobre">Por que nós</span>
-    <h2>Não é uma IA genérica. <em>É experiência de operação com a IA trabalhando junto.</em></h2>
+    <h2>Não é uma IA genérica. <em>É experiência de gestão com a IA trabalhando junto.</em></h2>
     <div class="motivos">
       <div class="motivo"><h3>Experiência de gestão</h3>
         <p>Anos respondendo pelo resultado de restaurantes: orçamento, fechamento de CMV, negociação com fornecedor e
@@ -374,7 +390,7 @@
       </div>
       <ul>
         <li><b>30% de desconto</b> no Diagnóstico e na Implantação</li>
-        <li><b>Atendimento direto</b> de quem faz, do primeiro dia ao Copiloto</li>
+        <li><b>Atendimento direto</b> de quem faz, do primeiro dia ao acompanhamento</li>
         <li><b>Case autorizado</b>: só publicamos o que você aprovar</li>
       </ul>
     </div>
@@ -424,14 +440,14 @@
   <div class="bloco">
     <div>
       <span class="selo">Vamos começar?</span>
-      <h2>Sua margem já está nos seus dados. <span>A gente mostra onde.</span></h2>
+      <h2>Seu lucro já está nos seus dados. <span>A gente mostra onde ele escapa.</span></h2>
       <p>Uma conversa de 30 minutos com os seus números: você conta como é a operação, a gente mostra na demonstração
         onde a margem costuma escapar e o que dá para ligar com os dados que você já tem. Você sai sabendo por onde
         começar, contratando ou não.</p>
       <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Marcar a conversa de 30 minutos ↗</a><a class="btn" href="diagnostico.html">Fazer o pré-diagnóstico (3 min) ↗</a></div>
     </div>
   </div>
-  <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · Instagram @fratia.food · <a href="privacidade.html">Privacidade</a></span></div>
+  <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · <a href="https://instagram.com/fratia.food" target="_blank" rel="noopener">Instagram @fratia.food</a> · <a href="privacidade.html">Privacidade</a></span></div>
 </footer>
 
 
@@ -457,9 +473,9 @@
     el('v-fat').textContent = brl(fat) + ' por mês';
     el('v-cmv').textContent = num(cmv) + '% da receita';
     el('v-pts').textContent = num(pts) + (pts === 1 ? ' ponto' : ' pontos') + ` (de ${num(cmv)}% para ${num(cmv - pts)}%)`;
-    el('r-ponto').textContent = brl(fat * 0.01) + ' por mês';
+    el('r-ponto').innerHTML = brl(fat * 0.01).replace(' ', '&nbsp;') + '<small style="font-size:.45em;font-weight:600">&nbsp;por&nbsp;mês</small>';
     el('r-rot-cenario').textContent = `${num(pts)} ${pts === 1 ? 'ponto' : 'pontos'} a menos de CMV`;
-    el('r-cenario').textContent = `${brl(fat * pts / 100)} por mês · ${brl(fat * pts / 100 * 12)} por ano`;
+    el('r-cenario').innerHTML = `${brl(fat * pts / 100)}&nbsp;por&nbsp;mês<br><b>${brl(fat * pts / 100 * 12)}&nbsp;por&nbsp;ano</b>`;
   }
   ['c-fat', 'c-cmv', 'c-pts'].forEach(id => el(id).addEventListener('input', calcular));
   calcular();
@@ -510,8 +526,9 @@
     img.src = base + e.img;
     if (animar) {
       const nome = e.img.replace('.png', '');
-      vid.poster = base + 'anim/' + nome + '.jpg';
-      vid.src = base + 'anim/' + nome + '.mp4';
+      const cel = window.matchMedia('(max-width: 640px)').matches ? 'cel/' : '';
+      vid.poster = base + 'anim/' + cel + nome + '.jpg';
+      vid.src = base + 'anim/' + cel + nome + '.mp4';
       vid.hidden = false; img.hidden = true;
       vid.play().catch(() => { vid.hidden = true; img.hidden = false; });   // sem autoplay: fica o print
     } else { vid.hidden = true; }
@@ -560,7 +577,7 @@
 })();
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="js/three.min.js"></script>
 <script>
 (() => {
   const caixa = document.getElementById('cena');
