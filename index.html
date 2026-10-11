@@ -69,19 +69,21 @@
   .intro { margin-top: 18px; font-size: 18px; line-height: 1.6; color: var(--f-sec); max-width: 40em; }
 
   /* vitrine: abas sublinhadas + tela do painel com o Copiloto ao lado (formato de produto em uso) */
-  .abas { display: flex; gap: 6px; margin-top: 44px; border-bottom: 1px solid var(--f-borda); overflow-x: auto; }
-  .aba { font: inherit; font-size: 16px; font-weight: 500; padding: 14px 22px 16px; cursor: pointer; white-space: nowrap;
+  .abas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px; margin-top: 44px; border-bottom: 1px solid var(--f-borda); }
+  .aba { font: inherit; font-size: 15px; font-weight: 500; padding: 12px 10px 14px; cursor: pointer; white-space: nowrap;
          border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--f-suave);
-         display: inline-flex; align-items: center; gap: 10px; margin-bottom: -1px; }
+         display: inline-flex; align-items: center; gap: 8px; margin-bottom: -1px; }
   .aba svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; }
-  .aba .seta { opacity: .5; font-size: 14px; }
+  .aba .seta { display: none; }
   .aba[aria-selected="true"] { color: var(--f-principal); border-bottom-color: var(--f-principal); }
   .aba[aria-selected="true"] .seta { display: none; }
   .legenda-aba { margin: 14px 4px 0; font-size: 15px; line-height: 1.55; color: var(--f-tinta-sec, #4b5a52); max-width: 980px; }
   .legenda-aba b { color: var(--f-principal); }
   .moldura { position: relative; margin-top: 28px; aspect-ratio: 16 / 10; height: auto; border-radius: 18px; overflow: hidden;
              border: 1px solid var(--f-borda); background: #fff; box-shadow: 0 24px 60px -30px rgba(29,42,36,.35); }
-  .moldura > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: left top; }
+  .moldura > img, .moldura > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: left top; }
+  .moldura.tour { aspect-ratio: 16 / 10; max-width: 880px; margin-left: auto; margin-right: auto; }
+  .moldura > video[hidden], .moldura > img[hidden] { display: none; }
   .selo-ficticio { position: absolute; top: 14px; left: 14px; font-size: 12px; font-weight: 600; padding: 5px 10px;
                    border-radius: 999px; background: var(--f-destaque); color: #fff; z-index: 1; }
   .copiloto { position: absolute; top: 0; right: 0; bottom: 0; width: min(46%, 560px); background: #10161c; color: #eef1f3;
@@ -129,6 +131,11 @@
   .num { font-size: 15px; font-weight: 700; color: var(--f-destaque); }
   .passo h3 { margin-top: 14px; font-size: 24px; font-weight: 600; }
   .passo p { margin-top: 12px; font-size: 16px; line-height: 1.6; color: var(--f-sec); }
+  .fontes { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 40px; padding: 22px 26px;
+    border: 1px solid var(--f-borda); border-radius: 18px; background: #fff; }
+  .fontes b { font-size: 14px; letter-spacing: .06em; text-transform: uppercase; margin-right: 8px; }
+  .fontes span { font-size: 15px; padding: 6px 13px; border-radius: 999px; background: var(--f-borda); }
+  .fontes em { flex-basis: 100%; font-style: normal; font-size: 15px; color: var(--f-sec); margin-top: 4px; }
   .passo .prazo { margin-top: 16px; font-size: 13px; color: var(--f-suave); }
 
   /* calculadora de margem */
@@ -187,7 +194,7 @@
     .final .bloco { grid-template-columns: 1fr; }
     .pilares { grid-template-columns: 1fr; }
     .moldura { height: auto; }
-    .moldura > img { position: relative; height: auto; }
+    .moldura > img, .moldura > video { position: relative; height: auto; }
     .copiloto { position: relative; width: 100%; border-left: 0; }
     .passos { grid-template-columns: 1fr; }
     .calc, .fundador, .motivos { grid-template-columns: 1fr; }
@@ -205,8 +212,8 @@
   <nav>
     <div class="logo"><svg class="marca-simbolo" viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#2bb3a3"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></div>
     <div class="menu">
-      <a href="#solucoes">Soluções</a><a href="#como">Como trabalhamos</a><a href="#demo">Demo</a><a href="#faq">Perguntas</a>
-      <a class="btn" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a>
+      <a href="#solucoes">Para quem é</a><a href="#como">Como trabalhamos</a><a href="#demo">Demo</a><a href="#faq">Perguntas</a>
+      <a class="btn" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Conversa de 30 min ↗</a>
     </div>
   </nav>
   <div class="texto">
@@ -216,7 +223,7 @@
       fechamento deixa de ser surpresa.</p>
     <div class="acoes">
       <a class="btn cheio" href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver a demonstração ↗</a>
-      <a class="btn" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a>
+      <a class="btn" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Conversa de 30 minutos ↗</a>
     </div>
   </div>
   <div class="atendemos">
@@ -224,49 +231,57 @@
   </div>
 </section>
 <main class="claro">
+  <!-- tour: o painel funcionando (abas, tema claro/escuro e Copiloto), mudo e em loop -->
+  <section class="bloco" id="tour">
+    <span class="sobre">O painel por dentro</span>
+    <h2>Todos os números num painel só. <em>E o Copiloto a um clique.</em></h2>
+    <div class="moldura tour">
+      <video src="telas/anim/tour.mp4" poster="telas/anim/tour.jpg" autoplay muted loop playsinline preload="auto"
+        aria-label="Navegação pelo painel: abas, troca para o tema escuro e o Copiloto respondendo"></video>
+    </div>
+  </section>
+
   <!-- vitrine: o produto em uso, com a pergunta e a decisão ao lado -->
   <section class="bloco" id="demo">
     <span class="sobre">Exemplos de decisão</span>
-    <h2>Pergunte como você perguntaria ao seu gerente. <em>A resposta vem com o número e a decisão.</em></h2>
-    <p class="intro">Oito painéis prontos, com três restaurantes fictícios em 24 meses de operação. Ao lado de cada um,
-      a leitura que chega até você. O mesmo esqueleto é implantado com os dados da sua empresa.</p>
+    <h2>O painel mostra onde a margem escapa. <em>A IA mostra onde agir.</em></h2>
+    <p class="intro">Oito painéis prontos e, ao lado de cada um, a leitura que chega até você. O mesmo esqueleto é
+      implantado e ligado ao sistema da sua empresa.</p>
 
     <div class="abas" role="tablist" id="abas"></div>
     <div class="moldura" role="tabpanel">
       <img id="p-img" alt="">
-      <span class="selo-ficticio">dados fictícios</span>
+      <video id="p-vid" muted loop playsinline preload="auto" aria-hidden="true"></video>
     </div>
     <p class="legenda-aba" id="p-legenda"></p>
   </section>
 
-  <!-- quatro pilares -->
+  <!-- para quem é: cada cargo vê a sua parte da mesma cadeia (da nota de compra ao lucro) -->
   <section class="bloco" id="solucoes">
-    <span class="sobre">O que entregamos</span>
-    <h2>Quatro frentes, um objetivo: <em>margem</em>.</h2>
+    <span class="sobre">Para quem é</span>
+    <h2>Da nota de compra ao lucro da casa. <em>Cada um vê a sua parte.</em></h2>
+    <p class="intro">Os mesmos dados, organizados uma vez, respondem a pergunta de cada pessoa da operação, com a
+      leitura em linguagem de restaurante e a IA incluída.</p>
     <div class="pilares">
       <article class="pilar" style="--cor:#1e5a44"><svg class="malha" data-semente="1" aria-hidden="true"></svg>
-        <span class="tag">Pare de pagar a mais</span>
-        <h3>Compras e estoque</h3>
-        <p>Preço pago contra o melhor preço do período, inflação da sua cesta, capital parado e quanto daria para
-          economizar, item a item.</p>
+        <span class="tag">Resultado por casa</span>
+        <h3>Dono e sócios</h3>
+        <p>O lucro de cada unidade contra o orçado, o que mais pesou no mês e as três prioridades do dia, sem abrir dez telas.</p>
         <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
       <article class="pilar" style="--cor:#c8703f"><svg class="malha" data-semente="2" aria-hidden="true"></svg>
-        <span class="tag">Custo sob controle</span>
-        <h3>CMV e ficha técnica</h3>
-        <p>CMV teórico contra o real e a diferença por insumo: onde o custo escapa entre a compra e o prato.
-          Com o cardápio cruzado entre popularidade e margem.</p>
+        <span class="tag">Consumo contra a ficha</span>
+        <h3>Chef e cozinha</h3>
+        <p>Quanto saiu do estoque além do que as fichas explicam, insumo por insumo, e quais pratos passaram do CMV-alvo.</p>
         <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
       <article class="pilar" style="--cor:#1f7f99"><svg class="malha" data-semente="3" aria-hidden="true"></svg>
-        <span class="tag">Resultado na mesa</span>
-        <h3>DRE gerencial</h3>
-        <p>Realizado contra orçado e ano anterior, conta a conta, com o lucro de cada unidade e a leitura
-          do mês em texto.</p>
+        <span class="tag">Preço de costume</span>
+        <h3>Compras</h3>
+        <p>Cada nota contra o preço de costume do item, o melhor preço que a própria rede já pagou e as notas que parecem erro de lançamento.</p>
         <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
       <article class="pilar" style="--cor:#a8791a"><svg class="malha" data-semente="4" aria-hidden="true"></svg>
-        <span class="tag">IA com contexto</span>
-        <h3>IA aplicada <span class="em-breve">incluída</span></h3>
-        <p>Não é uma IA que joga respostas. É a experiência de quem viveu a cozinha, a compra e o resultado, com a IA explicando
-          os números do seu painel. Ela não inventa nenhum; quem decide é você.</p>
+        <span class="tag">Do orçado ao realizado</span>
+        <h3>Financeiro e contador</h3>
+        <p>A DRE conta a conta contra o orçado e o ano anterior, o CMV e o prime cost do mês, com a leitura em texto pronta para a reunião.</p>
         <a href="https://demo-margem-restaurantes-fratia.streamlit.app/" target="_blank" rel="noopener">Ver na demo ↗</a></article>
     </div>
   </section>
@@ -287,10 +302,15 @@
         <p class="prazo">Entrega: painéis no ar, com acesso da sua equipe</p></div>
       <div class="passo"><span class="num">03</span>
         <h3>Acompanhamento</h3>
-        <p>Todo dia, as três prioridades no seu celular; todo mês, a reunião de margem com a decisão recomendada, levada
+        <p>Todo dia, as três prioridades no seu e-mail; todo mês, a reunião de margem com a decisão recomendada, levada
           para a mesa de compras e da diretoria.</p>
         <p class="prazo">Entrega: acompanhamento por assinatura mensal</p></div>
     </div>
+    <div class="fontes"><b>Integrado ao que você já usa</b><span>ERP da empresa (API)</span><span>Sistema de caixa
+      (PDV)</span><span>Notas fiscais eletrônicas</span>
+      <em>A integração é direta, pelo sistema que a sua empresa já usa: nada de trocar de sistema nem de alimentar
+        planilha. Planilha só entra no que não está em sistema, como o orçamento da DRE. O Diagnóstico confirma o que já
+        dá para conectar.</em></div>
   </section>
 
   <!-- calculadora de margem (só aritmética do próprio visitante, sem prometer resultado) -->
@@ -325,12 +345,14 @@
     <span class="sobre">Por que nós</span>
     <h2>Não é uma IA genérica. <em>É experiência de operação com a IA trabalhando junto.</em></h2>
     <div class="motivos">
-      <div class="motivo"><h3>Quem viveu a operação</h3>
-        <p>Anos de cozinha, compra, estoque e resultado de restaurante. Os alertas e as perguntas certas vêm de quem já
-          fechou CMV na mão — não de um modelo genérico.</p></div>
-      <div class="motivo"><h3>Seus dados, organizados</h3>
-        <p>Começamos pelo que você já tem — notas, planilhas, sistema de caixa — hoje espalhado. Arrumado, ele vira
-          acompanhamento no dia a dia, para o fechamento deixar de ser surpresa.</p></div>
+      <div class="motivo"><h3>Experiência de gestão</h3>
+        <p>Anos respondendo pelo resultado de restaurantes: orçamento, fechamento de CMV, negociação com fornecedor e
+          reunião de resultado com a diretoria. Os alertas e as perguntas certas vêm de quem já respondeu pelo número,
+          não de um modelo genérico.</p></div>
+      <div class="motivo"><h3>Integrado ao seu sistema</h3>
+        <p>Ligamos os painéis direto ao ERP e ao sistema de caixa que você já usa, por integração (API), sem trocar de
+          sistema. Os números se atualizam sozinhos e viram acompanhamento no dia a dia, para o fechamento deixar de
+          ser surpresa.</p></div>
       <div class="motivo"><h3>A IA sugere, você decide</h3>
         <p>O Copiloto lê os painéis por você, aponta onde agir e mostra de onde vem cada número. Ele não calcula por
           conta própria nem decide no seu lugar. Você para de caçar dado e foca no que é estratégico.</p></div>
@@ -361,8 +383,9 @@
     <h2>O que costumam perguntar <em>antes da primeira conversa</em>.</h2>
     <div class="faq">
       <details><summary>Preciso trocar meu sistema de caixa ou de estoque?</summary>
-        <p>Não. Trabalhamos com os dados que você já tem — sistema de caixa, notas fiscais, planilhas de estoque e
-          fichas técnicas. Se algo faltar, o Diagnóstico mostra o quê e como resolver.</p></details>
+        <p>Não. Os painéis se ligam direto ao ERP e ao sistema de caixa que você já usa, por integração (API), e se
+          atualizam sozinhos. Planilha só entra no que não está em sistema, como o orçamento. O Diagnóstico confirma o que
+          já dá para conectar e, se algo faltar, mostra como resolver.</p></details>
       <details><summary>E se os meus dados estiverem bagunçados?</summary>
         <p>É o mais comum, e é por isso que tudo começa conferindo os lançamentos: notas fora do padrão e preços que
           parecem erro de unidade, com a lista do que corrigir. Organizar o que já existe faz parte do trabalho.</p></details>
@@ -399,13 +422,15 @@
     <div>
       <span class="selo">Vamos começar?</span>
       <h2>Sua margem já está nos seus dados. <span>A gente mostra onde.</span></h2>
-      <p>Conte como é a sua operação. Em uma conversa de 30 minutos você sai sabendo por onde começar,
-        contratando ou não.</p>
-      <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Quero%20conversar%20sobre%20a%20Fratia">Vamos conversar ↗</a><a class="btn" href="#demo">Ver a demonstração ↗</a></div>
+      <p>Uma conversa de 30 minutos com os seus números: você conta como é a operação, a gente mostra na demonstração
+        onde a margem costuma escapar e o que dá para ligar com os dados que você já tem. Você sai sabendo por onde
+        começar, contratando ou não.</p>
+      <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Marcar a conversa de 30 minutos ↗</a><a class="btn" href="#demo">Ver a demonstração ↗</a></div>
     </div>
   </div>
-  <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · LinkedIn · Instagram @fratia.food · <a href="privacidade.html">Privacidade</a></span></div>
+  <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · Instagram @fratia.food · <a href="privacidade.html">Privacidade</a></span></div>
 </footer>
+
 
 <script>
 // ---------- subtítulo: opções para escolher (abrir com ?sub=A, ?sub=B ou ?sub=C) ----------
@@ -442,6 +467,10 @@
 // ---------- vitrine: abas + Copiloto (exemplos com dados fictícios) ----------
 (() => {
   const base = 'telas/';   // prints reais da vitrine com o Copiloto aberto (scripts/capturar_site.py)
+  // animação de cada aba (scripts/capturar_site_anim.py + composições Site<Aba> do projeto de vídeo): muda e em loop;
+  // quem pede menos movimento no sistema vê o print parado
+  const animar = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!animar) document.querySelectorAll('#tour video').forEach(v => { v.removeAttribute('autoplay'); v.pause(); });
   const icones = {
     compras: '<path d="M3 4h2l2.4 11h10.2L20 8H7"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
     vendas: '<path d="M4 19V9m5 10V5m5 14v-8m5 8v-5"/>',
@@ -454,7 +483,7 @@
   };
   // Cada aba: o painel e, ao lado, o Copiloto respondendo de verdade (dados fictícios da demo).
   const exemplos = [
-    { nome: 'Compras', icone: 'compras', img: 'compras.png',
+    { nome: 'Suprimentos', icone: 'compras', img: 'compras.png',
       legenda: '<b>"Em quais itens paguei mais caro do que deveria?"</b> O Copiloto cruza o preço pago com o melhor preço da rede e diz onde está a economia.' },
     { nome: 'Vendas', icone: 'vendas', img: 'vendas.png',
       legenda: '<b>"Vou bater a meta este mês?"</b> Meta até o dia, projeção de fechamento e o turno que puxou o mês para baixo.' },
@@ -471,10 +500,18 @@
     { nome: 'Voz do Cliente', icone: 'voz', img: 'voz.png',
       legenda: '<b>"O que mais pesa na nota dos clientes?"</b> A nota de 0 a 10 contra a meta e os temas que mais elogiam e criticam.' },
   ];
-  const lista = document.getElementById('abas'), legenda = document.getElementById('p-legenda'), img = document.getElementById('p-img');
+  const lista = document.getElementById('abas'), legenda = document.getElementById('p-legenda'), img = document.getElementById('p-img'),
+    vid = document.getElementById('p-vid');
   function mostrar(i) {
     const e = exemplos[i];
     img.src = base + e.img;
+    if (animar) {
+      const nome = e.img.replace('.png', '');
+      vid.poster = base + 'anim/' + nome + '.jpg';
+      vid.src = base + 'anim/' + nome + '.mp4';
+      vid.hidden = false; img.hidden = true;
+      vid.play().catch(() => { vid.hidden = true; img.hidden = false; });   // sem autoplay: fica o print
+    } else { vid.hidden = true; }
     img.alt = 'Painel ' + e.nome + ' da vitrine com o Copiloto respondendo, dados fictícios';
     legenda.innerHTML = e.legenda + ' <span style="opacity:.7">Resposta real da IA sobre os dados fictícios da demo; quem decide é você.</span>';
     [...lista.children].forEach((b, k) => b.setAttribute('aria-selected', k === i));
