@@ -53,6 +53,7 @@
 
   @media (max-width: 860px) {
     .menu a:not(.btn) { display: none; }
+    .menu .btn { white-space: nowrap; padding: 10px 16px; font-size: 14px; }
     .texto { justify-content: flex-end; padding-top: 42vh; }
   }
 
@@ -245,8 +246,8 @@
   <section class="bloco" id="demo">
     <span class="sobre">Exemplos de decisão</span>
     <h2>O painel mostra onde a margem escapa. <em>A IA mostra onde agir.</em></h2>
-    <p class="intro">Oito painéis prontos e, ao lado de cada um, a leitura que chega até você. O mesmo esqueleto é
-      implantado e ligado ao sistema da sua empresa.</p>
+    <p class="intro">Alguns exemplos do que dá para acompanhar, cada um com a leitura que chega até você. São modelos:
+      o seu painel é montado com o que importa para o seu negócio, ligado ao sistema da sua empresa.</p>
 
     <div class="abas" role="tablist" id="abas"></div>
     <div class="moldura" role="tabpanel">
@@ -289,20 +290,21 @@
   <!-- como trabalhamos -->
   <section class="bloco" id="como">
     <span class="sobre">Como trabalhamos</span>
-    <h2>Uma solução fechada, um objetivo: margem. <em>O foco, ajustado à sua operação.</em></h2>
+    <h2>Sob medida para o seu negócio, com um objetivo: <em>mais lucro no fim do mês.</em></h2>
     <div class="passos">
       <div class="passo"><span class="num">01</span>
         <h3>Diagnóstico</h3>
-        <p>Começamos conferindo os seus lançamentos: notas fora do padrão, preços que parecem erro de unidade ou de
-          digitação, e onde a margem já mostra sinais de vazamento.</p>
-        <p class="prazo">Entrega: a lista do que conferir e corrigir, e onde a margem escapa</p></div>
+        <p>Entendemos o que é prioridade para o seu negócio e conferimos os seus dados: o que já dá para acompanhar,
+          o que precisa de ajuste e onde o lucro já mostra sinais de vazamento.</p>
+        <p class="prazo">Entrega: os painéis que fazem sentido para você e onde a margem escapa</p></div>
       <div class="passo"><span class="num">02</span>
         <h3>Implantação</h3>
-        <p>Os painéis da vitrine ligados aos seus sistemas, com os seus números, as suas unidades e as suas metas.</p>
+        <p>Os painéis escolhidos, ajustados ao seu jeito de gerir e ligados aos seus sistemas, com os seus números,
+          as suas unidades e as suas metas. Partimos de modelos prontos, por isso a implantação é rápida.</p>
         <p class="prazo">Entrega: painéis no ar, com acesso da sua equipe</p></div>
       <div class="passo"><span class="num">03</span>
         <h3>Acompanhamento</h3>
-        <p>Todo dia, as três prioridades no seu e-mail; todo mês, a reunião de margem com a decisão recomendada, levada
+        <p>Todo dia, as três prioridades no seu e-mail; todo mês, a reunião de resultado com a decisão recomendada, levada
           para a mesa de compras e da diretoria.</p>
         <p class="prazo">Entrega: acompanhamento por assinatura mensal</p></div>
     </div>
@@ -336,6 +338,7 @@
         <div class="medio" id="r-cenario"></div>
         <p class="nota">Conta simples: faturamento × pontos de CMV. Não é promessa de resultado — é o tamanho do que está
           em jogo. Quanto disso dá para recuperar depende da sua operação, e é isso que o Diagnóstico mostra.</p>
+        <a class="btn" href="diagnostico.html" style="margin-top:18px">Faça o pré-diagnóstico (3 min) ↗</a>
       </div>
     </div>
   </section>
@@ -425,7 +428,7 @@
       <p>Uma conversa de 30 minutos com os seus números: você conta como é a operação, a gente mostra na demonstração
         onde a margem costuma escapar e o que dá para ligar com os dados que você já tem. Você sai sabendo por onde
         começar, contratando ou não.</p>
-      <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Marcar a conversa de 30 minutos ↗</a><a class="btn" href="#demo">Ver a demonstração ↗</a></div>
+      <div class="acoes"><a class="btn cheio" href="mailto:contato@fratia.com.br?subject=Conversa%20de%2030%20minutos">Marcar a conversa de 30 minutos ↗</a><a class="btn" href="diagnostico.html">Fazer o pré-diagnóstico (3 min) ↗</a></div>
     </div>
   </div>
   <div class="rodape"><span>Fratia · Dados e IA para restaurantes</span><span><a href="mailto:contato@fratia.com.br">contato@fratia.com.br</a> · Instagram @fratia.food · <a href="privacidade.html">Privacidade</a></span></div>
@@ -696,7 +699,8 @@
     const w = caixa.clientWidth, h = caixa.clientHeight, cel = w < 860;
     renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
     rede.position.set(cel ? 0 : 6.4, cel ? 3.2 : 1.7, 0);
-    rede.scale.setScalar(cel ? .55 : 1);
+    // no celular a escala acompanha a largura da tela, para a rede caber inteira (e com folga nas bordas)
+    rede.scale.setScalar(cel ? Math.min(.55, w / 900) : 1);
     alvoCamera.set(cel ? 0 : 1.5, 0, 0);
   }
   addEventListener('resize', ajustar); ajustar();

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pré-diagnóstico · Fratia</title>
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --fundo: #faf8f3; --card: #ffffff; --card2: #eee9dc; --tinta: #1d2a24; --sec: #4b5a52; --suave: #7c877f;
+          --principal: #1e5a44; --destaque: #c8703f; --borda: #e1dccd; --ok: #2f8a5b; --meio: #c9962b; --baixo: #c0533a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--fundo); color: var(--tinta); font-family: Inter, system-ui, sans-serif; }
+  a { color: var(--principal); }
+  .topo { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(16px, 5vw, 64px);
+          border-bottom: 1px solid var(--borda); }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 22px; text-decoration: none; color: var(--tinta); }
+  .logo svg { width: 30px; height: 30px; } .logo .ia { color: var(--destaque); }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
+  .sobre { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--principal); }
+  h1 { margin-top: 12px; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; }
+  h1 em { font-style: normal; color: var(--principal); }
+  .intro { margin-top: 16px; font-size: 17px; line-height: 1.6; color: var(--sec); }
+  .bloco { margin-top: 40px; }
+  .bloco h2 { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--suave);
+              padding-bottom: 10px; border-bottom: 1px solid var(--borda); }
+  fieldset { border: 0; margin-top: 26px; }
+  legend { font-size: 18px; font-weight: 600; line-height: 1.4; }
+  .opcoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .opcoes label { display: flex; gap: 10px; align-items: flex-start; padding: 13px 15px; border: 1px solid var(--borda);
+                  border-radius: 12px; background: var(--card); cursor: pointer; font-size: 15px; line-height: 1.4; }
+  .opcoes input { margin-top: 3px; accent-color: var(--principal); }
+  .opcoes label:has(input:checked) { border-color: var(--principal); box-shadow: 0 0 0 1px var(--principal); }
+  .progresso { position: sticky; top: 0; z-index: 2; background: var(--fundo); padding: 12px 0; margin-top: 28px; }
+  .barra { height: 6px; border-radius: 9px; background: var(--card2); overflow: hidden; }
+  .barra i { display: block; height: 100%; width: 0; background: var(--principal); transition: width .25s; }
+  .progresso span { display: block; margin-top: 6px; font-size: 13px; color: var(--suave); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; border: 0;
+         font: 600 16px Inter, sans-serif; cursor: pointer; text-decoration: none; background: var(--principal); color: #fff; }
+  .btn[disabled] { opacity: .45; cursor: default; }
+  .btn.claro { background: transparent; color: var(--principal); border: 1px solid var(--principal); }
+  .acoes { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .nota { font-size: 13px; color: var(--suave); line-height: 1.5; }
+  #resultado { display: none; margin-top: 48px; }
+  .card { background: var(--card); border: 1px solid var(--borda); border-radius: 18px; padding: 26px; margin-top: 18px; }
+  .card h3 { font-size: 20px; font-weight: 600; }
+  .area { display: grid; grid-template-columns: 130px 1fr 112px; gap: 14px; align-items: center; margin-top: 16px; font-size: 15px; }
+  .area .trilho { height: 10px; border-radius: 9px; background: var(--card2); overflow: hidden; }
+  .area .trilho i { display: block; height: 100%; border-radius: 9px; }
+  .area b { font-weight: 600; } .area em { font-style: normal; font-size: 13px; font-weight: 600; text-align: right; }
+  .comecar { border-left: 4px solid var(--destaque); }
+  .comecar p, .card p { margin-top: 10px; font-size: 16px; line-height: 1.6; color: var(--sec); }
+  .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .duas ul { margin-top: 12px; list-style: none; display: grid; gap: 8px; }
+  .duas li { font-size: 15px; padding: 9px 12px; border-radius: 10px; background: var(--card2); }
+  .duas li small { display: block; font-size: 12.5px; color: var(--suave); margin-top: 2px; }
+  @media (max-width: 640px) {
+    .opcoes, .duas { grid-template-columns: 1fr; }
+    .area { grid-template-columns: 96px 1fr 88px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<header class="topo">
+  <a class="logo" href="index.html"><svg viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#1e5a44"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></a>
+  <a href="index.html" class="nota">← voltar ao site</a>
+</header>
+<main>
+  <span class="sobre">Pré-diagnóstico · 3 minutos</span>
+  <h1>Onde o lucro do seu restaurante <em>pode estar escapando?</em></h1>
+  <p class="intro">12 perguntas rápidas sobre como você acompanha compras, custos, vendas e resultado. No fim, você vê na
+    hora como está cada área, por onde começar e quais painéis já dá para montar com os dados que você tem.</p>
+  <p class="nota" style="margin-top:10px">As respostas ficam só no seu navegador. Nada é enviado, a não ser que você
+    clique para mandar o resultado para a gente.</p>
+
+  <div class="progresso"><div class="barra"><i id="barra"></i></div><span id="contagem">0 de 12 respondidas</span></div>
+  <form id="form"></form>
+  <div class="acoes"><button class="btn" id="ver" disabled>Ver meu resultado</button>
+    <span class="nota" id="falta">Responda todas para ver o resultado.</span></div>
+
+  <section id="resultado" aria-live="polite">
+    <span class="sobre">Seu resultado</span>
+    <h1 style="font-size:clamp(26px,3.6vw,36px)" id="r-titulo"></h1>
+    <div class="card"><h3>Como está cada área</h3><div id="r-areas"></div></div>
+    <div class="card comecar"><h3 id="r-comecar-t"></h3><p id="r-comecar"></p></div>
+    <div class="duas">
+      <div class="card"><h3>Dá para montar já</h3><ul id="r-ja"></ul></div>
+      <div class="card"><h3>Depois de um ajuste</h3><ul id="r-depois"></ul></div>
+    </div>
+    <div class="card"><h3>E agora?</h3>
+      <p>Este é um retrato rápido, a partir das suas respostas. Na conversa de 30 minutos, olhamos juntos os seus números
+        e o que faz sentido para o seu negócio, contratando ou não.</p>
+      <div class="acoes" style="margin-top:20px"><a class="btn" id="enviar" href="#">Quero conversar sobre este resultado ↗</a>
+        <button class="btn claro" id="refazer" type="button">Refazer</button></div>
+      <p class="nota" style="margin-top:14px">O botão abre o seu e-mail com as respostas já preenchidas para
+        contato@fratia.com.br. Veja a <a href="privacidade.html">política de privacidade</a>.</p>
+    </div>
+  </section>
+</main>
+<script>
+// Perguntas: as de perfil não somam ponto; as outras valem 0 a 3 (do menos para o mais estruturado).
+const PERGUNTAS = [
+  { id: 'unidades', bloco: 'Sobre o seu negócio', texto: 'Quantas unidades você tem?',
+    opcoes: ['Uma', '2 ou 3', '4 a 10', 'Mais de 10'] },
+  { id: 'faturamento', texto: 'Quanto as unidades faturam por mês, somadas?',
+    opcoes: ['Até R$ 200 mil', 'R$ 200 mil a R$ 1 milhão', 'R$ 1 a 3 milhões', 'Mais de R$ 3 milhões'] },
+  { id: 'sistema', texto: 'Onde ficam as vendas, as compras e o estoque?',
+    opcoes: ['Num sistema de gestão (ERP) com compras e estoque', 'Só no sistema de caixa (PDV)', 'Em planilhas', 'Em nenhum lugar organizado'] },
+  { id: 'preco', area: 'Compras', bloco: 'Compras', texto: 'Quando a nota chega, alguém confere o preço?',
+    opcoes: ['Toda entrega, contra o preço de costume', 'Só nos itens que mais pesam', 'Só quando algo chama atenção', 'Não conferimos'], pontos: [3, 2, 1, 0] },
+  { id: 'comparar', area: 'Compras', texto: 'Você compara o preço do mesmo item entre fornecedores (ou entre as suas casas)?',
+    opcoes: ['Sim, todo mês', 'De vez em quando', 'Só na hora de cotar', 'Não'], pontos: [3, 2, 1, 0] },
+  { id: 'cmv', area: 'Custos', bloco: 'Custos e cozinha', texto: 'Quando você fica sabendo o CMV do mês?',
+    opcoes: ['Acompanho durante o mês', 'Até 10 dias depois de fechar', 'Mais de 10 dias depois', 'Não calculamos'], pontos: [3, 2, 1, 0] },
+  { id: 'fichas', area: 'Custos', texto: 'Os pratos têm ficha técnica?',
+    opcoes: ['Todos, com custo atualizado', 'A maioria, mas desatualizadas', 'Só alguns pratos', 'Não temos'], pontos: [3, 2, 1, 0] },
+  { id: 'inventario', area: 'Custos', texto: 'Com que frequência vocês fazem inventário?',
+    opcoes: ['Toda semana, nos itens principais', 'Uma vez por mês', 'De vez em quando', 'Não fazemos'], pontos: [3, 2, 1, 0] },
+  { id: 'meta', area: 'Vendas', bloco: 'Vendas', texto: 'Você tem meta de venda?',
+    opcoes: ['Sim, e acompanho durante o mês', 'Sim, mas só vejo no fechamento', 'Uma ideia, sem meta formal', 'Não'], pontos: [3, 2, 1, 0] },
+  { id: 'pratos', area: 'Vendas', texto: 'Você sabe quais pratos vendem mais e quanto cada um deixa?',
+    opcoes: ['Sim, a venda e a margem de cada prato', 'Só o que mais vende', 'Tenho uma ideia', 'Não'], pontos: [3, 2, 1, 0] },
+  { id: 'dre', area: 'Resultado', bloco: 'Resultado', texto: 'Como você acompanha o resultado do mês?',
+    opcoes: ['DRE mensal, comparada com um orçamento', 'DRE mensal, sem orçamento', 'Só o caixa (entrou e saiu)', 'Não acompanhamos'], pontos: [3, 2, 1, 0] },
+  { id: 'lucrocasa', area: 'Resultado', texto: 'Você sabe quanto cada unidade dá de lucro, todo mês?',
+    opcoes: ['Sim, todo mês', 'De vez em quando', 'Só o total da empresa', 'Não sei'], pontos: [3, 2, 1, 0] },
+];
+const AREAS = {
+  Compras: 'Compras pesa no custo e muda a cada entrega. Comparar cada nota com o preço de costume e com o melhor preço que você já conseguiu costuma ser o ganho mais rápido.',
+  Custos: 'O custo da comida é onde o lucro mais escapa sem ninguém ver: porção, rendimento, perda e ficha desatualizada. Acompanhar o CMV durante o mês, e não só no fechamento, muda o jogo.',
+  Vendas: 'Sem meta acompanhada no mês e sem saber quanto cada prato deixa, a venda cresce sem você saber se o lucro acompanha. Saber o que puxa a venda é o primeiro passo.',
+  Resultado: 'Sem DRE comparada com um orçamento, o fechamento vira surpresa. Ver o lucro de cada casa, conta a conta, mostra onde agir primeiro.',
+};
+
+const form = document.getElementById('form');
+let blocoAtual = '';
+PERGUNTAS.forEach((p, i) => {
+  if (p.bloco && p.bloco !== blocoAtual) {
+    blocoAtual = p.bloco;
+    const s = document.createElement('div'); s.className = 'bloco'; s.innerHTML = `<h2>${p.bloco}</h2>`; form.appendChild(s);
+  }
+  const f = document.createElement('fieldset');
+  f.innerHTML = `<legend>${i + 1}. ${p.texto}</legend><div class="opcoes">` +
+    p.opcoes.map((o, k) => `<label><input type="radio" name="${p.id}" value="${k}"> <span>${o}</span></label>`).join('') + '</div>';
+  form.lastChild.appendChild(f);
+});
+
+const respostas = () => Object.fromEntries(PERGUNTAS.map(p => {
+  const r = form.querySelector(`input[name="${p.id}"]:checked`); return [p.id, r ? +r.value : null];
+}));
+const botao = document.getElementById('ver');
+form.addEventListener('change', () => {
+  const n = Object.values(respostas()).filter(v => v !== null).length;
+  document.getElementById('barra').style.width = (n / PERGUNTAS.length * 100) + '%';
+  document.getElementById('contagem').textContent = `${n} de ${PERGUNTAS.length} respondidas`;
+  botao.disabled = n < PERGUNTAS.length;
+  document.getElementById('falta').style.display = n < PERGUNTAS.length ? '' : 'none';
+});
+
+function nivel(pct) {
+  if (pct >= 70) return ['Sob controle', 'var(--ok)'];
+  if (pct >= 40) return ['Em construção', 'var(--meio)'];
+  return ['Pede atenção', 'var(--baixo)'];
+}
+
+botao.addEventListener('click', (ev) => {
+  ev.preventDefault();
+  const r = respostas();
+  // nota de cada área (0 a 100)
+  const notas = {};
+  for (const area of Object.keys(AREAS)) {
+    const ps = PERGUNTAS.filter(p => p.area === area);
+    notas[area] = Math.round(ps.reduce((t, p) => t + p.pontos[r[p.id]], 0) / (ps.length * 3) * 100);
+  }
+  document.getElementById('r-areas').innerHTML = Object.entries(notas).map(([a, v]) => {
+    const [rot, cor] = nivel(v);
+    return `<div class="area"><b>${a}</b><div class="trilho"><i style="width:${Math.max(v, 4)}%;background:${cor}"></i></div><em style="color:${cor}">${rot}</em></div>`;
+  }).join('');
+  // por onde começar: a área de menor nota (empate: a ordem das áreas)
+  const pior = Object.entries(notas).sort((a, b) => a[1] - b[1])[0][0];
+  const media = Object.values(notas).reduce((t, v) => t + v, 0) / 4;
+  document.getElementById('r-titulo').textContent = media >= 70
+    ? 'Sua operação já é bem acompanhada. O ganho agora está nos detalhes.'
+    : media >= 40 ? 'Você já tem uma base. Falta enxergar o mês enquanto ele acontece.'
+    : 'Há espaço para ganhar controle, e lucro, começando pelo básico.';
+  document.getElementById('r-comecar-t').textContent = 'Por onde começar: ' + pior;
+  document.getElementById('r-comecar').textContent = AREAS[pior];
+  // painéis possíveis já e depois, pelos dados que a pessoa disse ter
+  const temERP = r.sistema === 0, temPDV = r.sistema <= 1, temPlanilha = r.sistema <= 2;
+  const ja = [], depois = [];
+  const por = (cond, nome, motivo) => (cond ? ja : depois).push(cond ? `${nome}` : `${nome}<small>${motivo}</small>`);
+  por(temPDV, 'Vendas e vendas por produto', 'precisa das vendas num sistema de caixa');
+  por(temERP || temPlanilha, 'Suprimentos (compras e preços)', 'precisa das notas de compra organizadas');
+  por(temERP && r.inventario <= 1, 'Estoque, Custos e CMV', 'precisa de estoque no sistema e inventário ao menos mensal');
+  por(r.fichas <= 1, 'Ficha técnica e cardápio', 'precisa das fichas técnicas (a gente ajuda a montar)');
+  por(r.dre <= 1, 'DRE gerencial', 'precisa de uma DRE mensal (o orçamento pode entrar por planilha)');
+  document.getElementById('r-ja').innerHTML = ja.length ? ja.map(x => `<li>${x}</li>`).join('') : '<li>Primeiro, organizar os dados de venda e compra</li>';
+  document.getElementById('r-depois').innerHTML = depois.length ? depois.map(x => `<li>${x}</li>`).join('') : '<li>Tudo pronto para começar</li>';
+  // e-mail com as respostas
+  const linhas = PERGUNTAS.map((p, i) => `${i + 1}. ${p.texto}\n   ${p.opcoes[r[p.id]]}`);
+  const corpo = 'Fiz o pré-diagnóstico no site e quero conversar sobre o resultado.\n\nNome:\nEmpresa:\nTelefone:\n\n' +
+    Object.entries(notas).map(([a, v]) => `${a}: ${nivel(v)[0]}`).join(' · ') + `\nPor onde começar: ${pior}\n\n` + linhas.join('\n');
+  document.getElementById('enviar').href = 'mailto:contato@fratia.com.br?subject=' +
+    encodeURIComponent('Pré-diagnóstico: quero conversar') + '&body=' + encodeURIComponent(corpo);
+  document.querySelector('.progresso').style.display = 'none';
+  const sec = document.getElementById('resultado'); sec.style.display = 'block';
+  sec.scrollIntoView({ behavior: 'smooth' });
+});
+document.getElementById('refazer').onclick = () => { form.reset(); form.dispatchEvent(new Event('change'));
+  document.getElementById('resultado').style.display = 'none'; document.querySelector('.progresso').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' }); };
+</script>
+</body>
+</html>
