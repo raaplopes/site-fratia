@@ -6,7 +6,7 @@
 <title>Fratia · Dados e IA para restaurantes</title>
 <link rel="icon" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* Abertura sempre escura (paleta Grafite da vitrine) */
   :root {
@@ -219,11 +219,73 @@
   }
   .fontes { line-height: 1.6; }
   .aba:focus-visible, .btn:focus-visible, summary:focus-visible { outline: 3px solid var(--f-destaque, #c8703f); outline-offset: 3px; }
+
+  /* ================= topo (15/out/2026): foto do passe + a cadeia em traço, fonte nova ================= */
+  .hero { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+  .hero h1 { font: 400 clamp(38px, 4.3vw, 66px)/1.04 'Newsreader', Georgia, serif; letter-spacing: -.02em; }
+  .hero .rotativa { font-style: italic; }
+  .hero .selo { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 400; }
+  .hero .atendemos b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; }
+  #topo-visual { position: absolute; inset: 0; }
+  #topo-visual .foto { position: absolute; inset: 0; background: url("telas/passe-cozinha.jpg") right 28% / 62% auto no-repeat; }
+  #topo-visual .foto::after { content: ""; position: absolute; inset: 0;
+     background: linear-gradient(90deg, #10161c 30%, rgba(16,22,28,.72) 55%, rgba(16,22,28,.45) 100%),
+                 linear-gradient(0deg, #10161c 0%, transparent 35%); }
+  #topo-visual .credito { position: absolute; right: 16px; bottom: 96px; font: 11px 'IBM Plex Mono', monospace; color: rgba(255,255,255,.45); }
+  #topo-visual svg { position: absolute; left: 43vw; bottom: 100px; width: min(46vw, 800px); height: auto; }
+  .desenho .tr { fill: none; stroke: var(--principal); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round;
+                 stroke-dasharray: 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 6px rgba(16,22,28,.9)); }
+  .desenho .tr.ouro { stroke: var(--destaque); }
+  .desenho.anda .tr { animation: desenha var(--d) cubic-bezier(.45, .05, .35, 1) var(--a) forwards; }
+  .desenho .linha-base { animation-timing-function: linear !important; }
+  .desenho .fim { opacity: 0; } .desenho.anda .fim { animation: aparece .6s ease var(--a) forwards; }
+  .desenho text { font: 500 20px 'IBM Plex Mono', monospace; letter-spacing: .08em; fill: var(--destaque); text-transform: uppercase; }
+  .desenho .rotulo { font: 17px 'IBM Plex Mono', monospace; fill: #c9d1d8; letter-spacing: .1em; opacity: 0; }
+  .desenho.anda .rotulo { animation: aparece .6s ease var(--a) forwards; }
+  .desenho.sai svg { opacity: 0; transition: opacity .9s; }
+  @keyframes desenha { to { stroke-dashoffset: 0; } }
+  @keyframes aparece { to { opacity: 1; } }
+  @media (max-width: 860px) {
+    #topo-visual .foto { background-size: cover; background-position: center 30%; height: 56vh; bottom: auto; }
+    #topo-visual .foto::after { background: linear-gradient(0deg, #10161c 0%, rgba(16,22,28,.55) 50%, rgba(16,22,28,.35) 100%); }
+    #topo-visual .credito { top: 92px; bottom: auto; right: 12px; }
+    #topo-visual svg { left: 50%; bottom: auto; top: 100px; transform: translateX(-50%); width: 96vw; }
+  }
+  @media (prefers-reduced-motion: reduce) { .desenho .tr { stroke-dashoffset: 0; animation: none !important; }
+    .desenho .fim, .desenho .rotulo { opacity: 1; } }
 </style>
 </head>
 <body>
 <section class="hero">
-  <div id="cena" aria-hidden="true"></div>
+  <div id="topo-visual" class="desenho" aria-hidden="true">
+    <div class="foto"></div><span class="credito">Foto: Unsplash</span>
+    <svg viewBox="0 140 1200 320">
+      <!-- a linha de base atravessa a cadeia inteira; cada etapa se desenha quando a linha chega nela -->
+      <path class="tr linha-base" pathLength="1" style="--a:.1s;--d:9.4s" d="M10 380 H1185"/>
+      <!-- compra: nota -->
+      <path class="tr" pathLength="1" style="--a:.3s;--d:1.5s" d="M50 380 V160 H170 V380 l-12 12 l-12 -12 l-12 12 l-12 -12 l-12 12 l-12 -12 l-12 12 l-12 -12 l-12 12 l-12 -12"/>
+      <path class="tr" pathLength="1" style="--a:1.4s;--d:.9s" d="M72 200 H148 M72 230 H130 M72 260 H148 M72 290 H118 M72 340 H148"/>
+      <text class="rotulo" x="60" y="440" style="--a:.8s">COMPRA</text>
+      <!-- estoque: prateleira com caixas -->
+      <path class="tr" pathLength="1" style="--a:2.2s;--d:1.4s" d="M280 380 V180 H420 V380 M280 280 H420"/>
+      <path class="tr" pathLength="1" style="--a:3s;--d:1s" d="M295 280 V236 H340 V280 M352 280 V252 H404 V280 M296 380 V322 H356 V380 M366 380 V336 H406 V380"/>
+      <text class="rotulo" x="300" y="440" style="--a:2.6s">ESTOQUE</text>
+      <!-- prato: garfo, prato e faca -->
+      <path class="tr" pathLength="1" style="--a:4s;--d:.8s" d="M500 380 V258 M490 196 V244 Q490 258 500 258 Q510 258 510 244 V196 M500 196 V244"/>
+      <path class="tr" pathLength="1" style="--a:4.5s;--d:1.3s" d="M590 208 a72 72 0 1 1 -0.1 0 M590 232 a48 48 0 1 1 -0.1 0"/>
+      <path class="tr" pathLength="1" style="--a:5.2s;--d:.7s" d="M680 380 V292 C680 252 692 230 698 220 V300 H680"/>
+      <text class="rotulo" x="560" y="440" style="--a:4.6s">PRATO</text>
+      <!-- venda: maquininha com o comprovante saindo -->
+      <path class="tr" pathLength="1" style="--a:5.8s;--d:1.2s" d="M780 380 V206 H882 V380 M795 220 H867 V258 H795 Z M806 206 V170 H856 V206"/>
+      <path class="tr" pathLength="1" style="--a:6.6s;--d:.7s" d="M800 285 h12 M826 285 h12 M852 285 h12 M800 312 h12 M826 312 h12 M852 312 h12 M800 339 h12 M826 339 h12 M852 339 h12"/>
+      <text class="rotulo" x="800" y="440" style="--a:6.2s">VENDA</text>
+      <!-- resultado: gráfico subindo em dourado -->
+      <path class="tr" pathLength="1" style="--a:7.4s;--d:.8s" d="M990 380 V186"/>
+      <path class="tr ouro" pathLength="1" style="--a:8s;--d:1.5s" d="M1005 356 L1040 336 L1075 346 L1110 292 L1145 266 L1168 214"/>
+      <g class="fim" style="--a:9.4s"><circle cx="1168" cy="214" r="9" fill="#f0b429"/><text x="1010" y="186">+ lucro</text></g>
+      <text class="rotulo" x="1015" y="440" style="--a:7.8s">RESULTADO</text>
+    </svg>
+  </div>
   <nav>
     <div class="logo"><svg class="marca-simbolo" viewBox="2 -6 130 130" aria-hidden="true"><path d="M64 64 L112.5 36 A56 56 0 1 1 64 8 Z" fill="#2bb3a3"/><path transform="translate(6,-10)" d="M64 64 L64 8 A56 56 0 0 1 112.5 36 Z" fill="#f0b429"/></svg><span>Frat<span class="ia">ia</span></span></div>
     <div class="menu">
@@ -574,197 +636,18 @@
 })();
 </script>
 
-<script src="js/three.min.js"></script>
 <script>
+// topo: troca da palavra do título e o desenho da cadeia em laço (desenha, segura, esmaece, recomeça)
 (() => {
-  const caixa = document.getElementById('cena');
-  const palavra = document.getElementById('palavra');
-  const reduzMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const frases = ['na compra.', 'no estoque.', 'no cardápio.', 'no resultado.'];
-
-  const COR = 0x2bb3a3, BRANCO = 0xffffff;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  caixa.appendChild(renderer.domElement);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 200);
-  const alvoCamera = new THREE.Vector3(0, 0, 0);
-  // textura de disco suave para os pontos ficarem redondos
-  const disco = (() => { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
-    const r = g.createRadialGradient(32, 32, 0, 32, 32, 32); r.addColorStop(0, "#fff"); r.addColorStop(.55, "#fff"); r.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = r; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
-
-  // ---------- 1. piso de malha ondulante (fundo) ----------
-  const N = 13, LADO = 58;
-  const malha = new Float32Array((N + 1) * (N + 1) * 3);      // vértices da grade
-  const linhasMalha = new Float32Array(N * (N + 1) * 2 * 6);  // segmentos horizontais + verticais
-  const geoMalha = new THREE.BufferGeometry();
-  geoMalha.setAttribute('position', new THREE.BufferAttribute(linhasMalha, 3));
-  scene.add(new THREE.LineSegments(geoMalha, new THREE.LineBasicMaterial({ color: COR, transparent: true, opacity: .45 })));
-  const geoNos = new THREE.BufferGeometry();
-  geoNos.setAttribute('position', new THREE.BufferAttribute(malha, 3));
-  scene.add(new THREE.Points(geoNos, new THREE.PointsMaterial({ map: disco, transparent: true, color: COR, size: .3 })));
-
-  function atualizarMalha(t) {
-    for (let i = 0; i <= N; i++) for (let j = 0; j <= N; j++) {
-      const x = (i / N - .5) * LADO, z = (j / N - .5) * LADO - 7, o = (i * (N + 1) + j) * 3;
-      malha[o] = x;
-      malha[o + 1] = -4.2 + Math.sin(x * .16 + t * .35) * 1.1 + Math.cos(z * .14 + t * .25) * 1.1;
-      malha[o + 2] = z;
-    }
-    let k = 0; const v = (i, j) => (i * (N + 1) + j) * 3;
-    for (let i = 0; i <= N; i++) for (let j = 0; j < N; j++) {
-      linhasMalha.set(malha.subarray(v(i, j), v(i, j) + 3), k); linhasMalha.set(malha.subarray(v(i, j + 1), v(i, j + 1) + 3), k + 3); k += 6;
-      linhasMalha.set(malha.subarray(v(j, i), v(j, i) + 3), k); linhasMalha.set(malha.subarray(v(j + 1, i), v(j + 1, i) + 3), k + 3); k += 6;
-    }
-    geoMalha.attributes.position.needsUpdate = true; geoNos.attributes.position.needsUpdate = true;
-  }
-
-  // ---------- 2. rede neural 3D (objeto principal): dados entram, a IA processa, a decisão acende ----------
-  const rede = new THREE.Group(); scene.add(rede);
-  const DOURADO = new THREE.Color(0xf0b429), VERDE = new THREE.Color(COR), BRANCA = new THREE.Color(1, 1, 1);
-  const camadas = [[4, 1], [5, 1], [3, 1], [1, 1]];   // diagrama clássico: colunas de nós, poucas e legíveis
-  const ESP_X = 3.2, ESP = 1.45;
-  const nos = [];
-  camadas.forEach(([a, b], c) => {
-    for (let i = 0; i < a; i++) for (let j = 0; j < b; j++)
-      nos.push({ camada: c, p: new THREE.Vector3((c - (camadas.length - 1) / 2) * ESP_X,
-        (i - (a - 1) / 2) * ESP, (j - (b - 1) / 2) * ESP) });
-  });
-  const saida = nos[nos.length - 1];
-  const ULTIMA = camadas.length - 1;
-
-  // ligações entre camadas vizinhas (só uma parte, para não poluir)
-  const arestas = [];
-  for (const a of nos) for (const b of nos)
-    if (b.camada === a.camada + 1) arestas.push([a, b, Math.random()]);
-  const posArestas = new Float32Array(arestas.length * 6);
-  arestas.forEach(([a, b], k) => posArestas.set([a.p.x, a.p.y, a.p.z, b.p.x, b.p.y, b.p.z], k * 6));
-  const geoArestas = new THREE.BufferGeometry();
-  geoArestas.setAttribute('position', new THREE.BufferAttribute(posArestas, 3));
-  const matArestas = new THREE.LineBasicMaterial({ color: COR, transparent: true, opacity: .32 });
-  rede.add(new THREE.LineSegments(geoArestas, matArestas));
-
-  // nós
-  const posNos = new Float32Array(nos.length * 3), corNos = new Float32Array(nos.length * 3);
-  nos.forEach((n, k) => posNos.set([n.p.x, n.p.y, n.p.z], k * 3));
-  const geoNosRede = new THREE.BufferGeometry();
-  geoNosRede.setAttribute('position', new THREE.BufferAttribute(posNos, 3));
-  geoNosRede.setAttribute('color', new THREE.BufferAttribute(corNos, 3));
-  rede.add(new THREE.Points(geoNosRede, new THREE.PointsMaterial({ map: disco, transparent: true, size: .75, vertexColors: true })));
-  // brilho do nó de saída (a decisão)
-  const brilho = new THREE.Points(new THREE.BufferGeometry().setFromPoints([saida.p]),
-    new THREE.PointsMaterial({ map: disco, transparent: true, color: DOURADO, size: .9, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
-  rede.add(brilho);
-
-  // pulsos: um conjunto de fundo (rede sempre viva) e a onda principal de cada ciclo
-  function criarPulsos(tamanho) {
-    const pos = new Float32Array(arestas.length * 3), cor = new Float32Array(arestas.length * 3);
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(cor, 3));
-    rede.add(new THREE.Points(g, new THREE.PointsMaterial({ map: disco, transparent: true, size: tamanho, vertexColors: true, transparent: true,
-      blending: THREE.AdditiveBlending, depthWrite: false })));
-    return { pos, cor, g };
-  }
-  const fundo = criarPulsos(.14), onda = criarPulsos(.26);
-
-  // traços brancos que saem da decisão quando ela acende
-  const QTD_RAIOS = 28;
-  const raios = Array.from({ length: QTD_RAIOS }, () => ({
-    d: new THREE.Vector3(Math.random() - .3, Math.random() - .5, Math.random() - .5).normalize(),
-    comp: .6 + Math.random() * 2.2, fase: Math.random() * 6.28 }));
-  const posRaios = new Float32Array(QTD_RAIOS * 6);
-  const geoRaios = new THREE.BufferGeometry();
-  geoRaios.setAttribute('position', new THREE.BufferAttribute(posRaios, 3));
-  const matRaios = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
-  rede.add(new THREE.LineSegments(geoRaios, matRaios));
-
-  // w: posição da onda medida em camadas (0 a ULTIMA); decisao: 0..1, quanto o nó de saída está aceso
-  function atualizarRede(t, w, decisao) {
-    arestas.forEach(([a, b, fase], k) => {
-      const u = (t * .25 + fase) % 1;                         // pulso de fundo, lento e fraco
-      fundo.pos.set([a.p.x + (b.p.x - a.p.x) * u, a.p.y + (b.p.y - a.p.y) * u, a.p.z + (b.p.z - a.p.z) * u], k * 3);
-      const i = .28 * Math.sin(u * Math.PI);
-      fundo.cor.set([VERDE.r * i, VERDE.g * i, VERDE.b * i], k * 3);
-      const v = w - a.camada, vv = Math.min(1, Math.max(0, v));  // onda principal
-      onda.pos.set([a.p.x + (b.p.x - a.p.x) * vv, a.p.y + (b.p.y - a.p.y) * vv, a.p.z + (b.p.z - a.p.z) * vv], k * 3);
-      const j = v > 0 && v < 1 ? Math.sin(v * Math.PI) : 0;
-      onda.cor.set([j, j, j], k * 3);
-    });
-    for (const p of [fundo, onda]) { p.g.attributes.position.needsUpdate = true; p.g.attributes.color.needsUpdate = true; }
-    nos.forEach((n, k) => {                                   // a camada por onde a onda passa clareia
-      const perto = Math.max(0, 1 - Math.abs(w - n.camada) * 1.6);
-      const c = n === saida ? VERDE.clone().lerp(DOURADO, decisao) : VERDE.clone().lerp(BRANCA, perto * .7);
-      corNos.set([c.r, c.g, c.b], k * 3);
-    });
-    geoNosRede.attributes.color.needsUpdate = true;
-    brilho.material.opacity = decisao * (.75 + .25 * Math.sin(t * 6));
-    matRaios.opacity = decisao * .85;
-    raios.forEach((r, k) => {
-      const ini = .5, fim = ini + r.comp * decisao * (.6 + .4 * Math.sin(t * 2 + r.fase));
-      posRaios.set([saida.p.x + r.d.x * ini, saida.p.y + r.d.y * ini, saida.p.z + r.d.z * ini,
-                    saida.p.x + r.d.x * fim, saida.p.y + r.d.y * fim, saida.p.z + r.d.z * fim], k * 6);
-    });
-    geoRaios.attributes.position.needsUpdate = true;
-  }
-
-  // ---------- layout responsivo ----------
-  function ajustar() {
-    const w = caixa.clientWidth, h = caixa.clientHeight, cel = w < 860;
-    renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
-    rede.position.set(cel ? 0 : 6.4, cel ? 3.2 : 1.7, 0);
-    // no celular a escala acompanha a largura da tela, para a rede caber inteira (e com folga nas bordas)
-    rede.scale.setScalar(cel ? Math.min(.55, w / 900) : 1);
-    alvoCamera.set(cel ? 0 : 1.5, 0, 0);
-  }
-  addEventListener('resize', ajustar); ajustar();
-
-  // ---------- ciclo: calma -> onda atravessa a rede -> decisão acende (troca a palavra) -> apaga ----------
-  const CALMA = 1800, ONDA = 2600, DECISAO = 2600, APAGA = 900, CICLO = CALMA + ONDA + DECISAO + APAGA;
-  const suave = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  function estado(ms) {
-    const m = ms % CICLO;
-    if (m < CALMA) return { w: -1, decisao: 0 };
-    if (m < CALMA + ONDA) { const f = (m - CALMA) / ONDA; return { w: f * ULTIMA, decisao: Math.max(0, f - .92) / .08 }; }
-    if (m < CALMA + ONDA + DECISAO) return { w: ULTIMA + 1, decisao: 1 };
-    return { w: ULTIMA + 1, decisao: 1 - suave((m - CALMA - ONDA - DECISAO) / APAGA) };
-  }
-  let indiceFrase = 0, cicloAnterior = 0;
-  function trocarFrase() {
-    indiceFrase = (indiceFrase + 1) % frases.length;
-    palavra.classList.add('saindo');
-    setTimeout(() => { palavra.textContent = frases[indiceFrase]; palavra.classList.remove('saindo'); }, 500);
-  }
-
-  // mouse: a câmera acompanha o cursor (paralaxe)
-  let mx = 0, my = 0;
-  addEventListener('pointermove', e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
-  camera.position.set(0, 1.2, 17);
-
-  const t0 = performance.now();
-  function quadro(agora) {
-    const ms = agora - t0, t = ms / 1000, { w, decisao } = estado(ms);
-    const marco = CALMA + ONDA;                               // troca a frase quando a decisão acende
-    if (ms > marco) { const ciclo = Math.floor((ms - marco) / CICLO); if (ciclo >= cicloAnterior) { cicloAnterior = ciclo + 1; trocarFrase(); } }
-
-    atualizarMalha(t);
-    atualizarRede(t, w, decisao);
-    rede.rotation.y = -.3 + Math.sin(t * .2) * .22;
-    rede.rotation.x = .05 + Math.sin(t * .15) * .05;
-
-    camera.position.x += (mx * 4 - camera.position.x) * .04;
-    camera.position.y += (1.2 - my * 2.5 - camera.position.y) * .04;
-    camera.lookAt(alvoCamera);
-    renderer.render(scene, camera);
-    requestAnimationFrame(quadro);
-  }
-
-  if (reduzMovimento) {   // sem animação: rede parada com a decisão acesa
-    atualizarMalha(0); rede.rotation.y = -.55; rede.rotation.x = .12; atualizarRede(0, ULTIMA + 1, 1);
-    camera.lookAt(alvoCamera); renderer.render(scene, camera);
-  } else {
-    requestAnimationFrame(quadro);
-  }
+  const frases = ['na compra.', 'no estoque.', 'no cardápio.', 'no resultado.'], palavra = document.getElementById('palavra');
+  const calmo = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let k = 0;
+  if (!calmo) setInterval(() => { k = (k + 1) % frases.length; palavra.classList.add('saindo');
+    setTimeout(() => { palavra.textContent = frases[k]; palavra.classList.remove('saindo'); }, 500); }, 7900);
+  const el = document.getElementById('topo-visual');
+  function desenhar() { el.classList.remove('anda', 'sai'); void el.offsetWidth; el.classList.add('anda');
+    setTimeout(() => { el.classList.add('sai'); setTimeout(desenhar, 1000); }, 14000); }
+  if (!calmo) desenhar();
 })();
 </script>
 </body>
