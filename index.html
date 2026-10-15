@@ -6,7 +6,7 @@
 <title>Fratia · Dados e IA para restaurantes</title>
 <link rel="icon" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* Abertura sempre escura (paleta Grafite da vitrine) */
   :root {
@@ -14,7 +14,7 @@
     --principal: #2bb3a3; --destaque: #f0b429; --borda: #2a333c;
   }
   * { box-sizing: border-box; margin: 0; }
-  html, body { background: var(--fundo); color: var(--tinta); font-family: Inter, system-ui, sans-serif; }
+  html, body { background: var(--fundo); color: var(--tinta); font-family: 'IBM Plex Sans', system-ui, sans-serif; }
 
   .hero { position: relative; min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   #cena { position: absolute; inset: 0; }
@@ -64,9 +64,9 @@
     background: var(--f-fundo); color: var(--f-tinta);
   }
   .bloco { padding: clamp(64px, 10vw, 120px) clamp(16px, 5vw, 80px); max-width: 1440px; margin: 0 auto; }
-  .sobre { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--f-principal); }
-  .claro h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; margin-top: 14px; max-width: 22em; }
-  .claro h2 em { font-style: normal; color: var(--f-principal); }
+  .sobre { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--f-principal); }
+  .claro h2 { font-family: 'Newsreader', Georgia, serif; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.1; letter-spacing: -.015em; font-weight: 400; margin-top: 14px; max-width: 22em; }
+  .claro h2 em { font-style: italic; color: var(--f-principal); }
   .intro { margin-top: 18px; font-size: 18px; line-height: 1.6; color: var(--f-sec); max-width: 40em; }
 
   /* vitrine: abas sublinhadas + tela do painel com o Copiloto ao lado (formato de produto em uso) */
@@ -184,7 +184,7 @@
   /* chamada final + rodapé (volta ao escuro, como a referência) */
   .final { background: var(--fundo); color: var(--tinta); }
   .final .bloco { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
-  .final h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.1; font-weight: 600; letter-spacing: -.02em; margin-top: 14px; }
+  .final h2 { font-family: 'Newsreader', Georgia, serif; font-size: clamp(32px, 3.6vw, 50px); line-height: 1.1; font-weight: 400; letter-spacing: -.015em; margin-top: 14px; }
   .final h2 span { color: var(--principal); }
   .final p { margin-top: 18px; color: var(--tinta-sec); font-size: 17px; line-height: 1.6; max-width: 32em; }
   .final .acoes { margin-top: 30px; }
@@ -222,7 +222,7 @@
 
   /* ================= topo (15/out/2026): foto do passe + a cadeia em traço, fonte nova ================= */
   .hero { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
-  .hero h1 { font: 400 clamp(38px, 4.3vw, 66px)/1.04 'Newsreader', Georgia, serif; letter-spacing: -.02em; }
+  .hero h1 { font: 400 clamp(32px, 3.7vw, 56px)/1.05 'Newsreader', Georgia, serif; letter-spacing: -.02em; }
   .hero .rotativa { font-style: italic; }
   .hero .selo { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 400; }
   .hero .atendemos b { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 500; font-size: 13px; }
@@ -249,7 +249,10 @@
     #topo-visual .foto { background-size: cover; background-position: center 30%; height: 56vh; bottom: auto; }
     #topo-visual .foto::after { background: linear-gradient(0deg, #10161c 0%, rgba(16,22,28,.55) 50%, rgba(16,22,28,.35) 100%); }
     #topo-visual .credito { top: 92px; bottom: auto; right: 12px; }
-    #topo-visual svg { left: 50%; bottom: auto; top: 100px; transform: translateX(-50%); width: 96vw; }
+    /* celular: a linha no terço de baixo da foto, e o texto começa logo abaixo da foto */
+    #topo-visual svg { left: 50%; bottom: auto; top: calc(56vh - 118px); transform: translateX(-50%); width: 94vw; }
+    .hero .texto { padding-top: calc(56vh + 4px); }
+    .hero h1 { font-size: 32px; line-height: 1.08; }
   }
   @media (prefers-reduced-motion: reduce) { .desenho .tr { stroke-dashoffset: 0; animation: none !important; }
     .desenho .fim, .desenho .rotulo { opacity: 1; } }
@@ -258,7 +261,7 @@
 <body>
 <section class="hero">
   <div id="topo-visual" class="desenho" aria-hidden="true">
-    <div class="foto"></div><span class="credito">Foto: Unsplash</span>
+    <div class="foto"></div>
     <svg viewBox="0 140 1200 320">
       <!-- a linha de base atravessa a cadeia inteira; cada etapa se desenha quando a linha chega nela -->
       <path class="tr linha-base" pathLength="1" style="--a:.1s;--d:9.4s" d="M10 380 H1185"/>

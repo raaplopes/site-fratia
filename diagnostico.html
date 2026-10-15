@@ -6,12 +6,12 @@
 <title>Pré-diagnóstico · Fratia</title>
 <link rel="icon" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root { --fundo: #faf8f3; --card: #ffffff; --card2: #eee9dc; --tinta: #1d2a24; --sec: #4b5a52; --suave: #7c877f;
           --principal: #1e5a44; --destaque: #c8703f; --borda: #e1dccd; --ok: #2f8a5b; --meio: #c9962b; --baixo: #c0533a; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: var(--fundo); color: var(--tinta); font-family: Inter, system-ui, sans-serif; }
+  html, body { background: var(--fundo); color: var(--tinta); font-family: 'IBM Plex Sans', system-ui, sans-serif; }
   a { color: var(--principal); }
   .topo { display: flex; justify-content: space-between; align-items: center; padding: 22px clamp(16px, 5vw, 64px);
           border-bottom: 1px solid var(--borda); }
@@ -19,11 +19,11 @@
   .logo svg { width: 30px; height: 30px; } .logo .ia { color: #d99a12; }
   main { max-width: 760px; margin: 0 auto; padding: 48px 16px 80px; }
   .sobre { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--principal); }
-  h1 { margin-top: 12px; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -.02em; font-weight: 600; }
+  h1 { margin-top: 12px; font-family: 'Newsreader', Georgia, serif; font-size: clamp(30px, 4.4vw, 44px); line-height: 1.1; letter-spacing: -.015em; font-weight: 400; }
   h1 em { font-style: normal; color: var(--principal); }
   .intro { margin-top: 16px; font-size: 17px; line-height: 1.6; color: var(--sec); }
   .bloco { margin-top: 40px; }
-  .bloco h2 { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--suave);
+  .bloco h2 { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--suave);
               padding-bottom: 10px; border-bottom: 1px solid var(--borda); }
   fieldset { border: 0; margin-top: 26px; }
   legend { font-size: 18px; font-weight: 600; line-height: 1.4; }
@@ -37,7 +37,7 @@
   .barra i { display: block; height: 100%; width: 0; background: var(--principal); transition: width .25s; }
   .progresso span { display: block; margin-top: 6px; font-size: 13px; color: var(--suave); }
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; border: 0;
-         font: 600 16px Inter, sans-serif; cursor: pointer; text-decoration: none; background: var(--principal); color: #fff; }
+         font: 600 16px 'IBM Plex Sans', system-ui, sans-serif; cursor: pointer; text-decoration: none; background: var(--principal); color: #fff; }
   .btn[disabled] { opacity: .45; cursor: default; }
   .btn.claro { background: transparent; color: var(--principal); border: 1px solid var(--principal); }
   .acoes { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
